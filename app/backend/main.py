@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from api.router import router
+from app.backend.api.router import api_router
 from fastapi.middleware.cors import CORSMiddleware
 
 # Create app
@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 # mount all routes
-app.include_router(router) 
+app.include_router(api_router) 
 
 
 # Health Check Route

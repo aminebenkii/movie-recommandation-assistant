@@ -1,11 +1,6 @@
-# Import SQLAlchemy functions to create the DB engine and session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Define the path to your SQLite database file
-# "sqlite:///./movies.db" means:
-# → Use SQLite
-# → Store the file in the current directory with the name 'movies.db'
 DATABASE_URL = "sqlite:///./movies.db"
 
 # Create the database engine using the URL above
@@ -29,3 +24,13 @@ SessionLocal = sessionmaker(
 # Create a base class from which all your models will inherit
 # This Base class is used by SQLAlchemy to create tables later
 Base = declarative_base()
+
+
+
+# FastAPI dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

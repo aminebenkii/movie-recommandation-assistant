@@ -5,8 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 # Create app
 app = FastAPI(
     title="Movies You Didn't Watch",
-    description="A Conversationnal movie recommender chatbot",
-    version="1.0.0"
+    description="A Conversational movie recommender chatbot",
+    version="1.0.0",
+    docs_url="/docs",     
+    redoc_url=None        
 )
 
 # Allow frontend to connect
@@ -22,8 +24,8 @@ app.add_middleware(
 app.include_router(api_router) 
 
 
-# Health Check Route
-@app.get("/health")
-def health_check():
-    return {"message": "app is live"}
+# Health Check endpoint
+@app.get("/health", tags=["Health"])
+async def health_check():
+    return {"status": "ok"}
 

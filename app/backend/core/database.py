@@ -1,33 +1,22 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-DATABASE_URL = "sqlite:///./movies.db"
+DATABASE_URL = "sqlite:///./storage/movies.db"
 
-# Create the database engine using the URL above
-# `connect_args={"check_same_thread": False}` is required for SQLite
-# because SQLite is single-threaded and FastAPI is multi-threaded
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False}
-)
+# Create the engine (pipe to db)
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 
-# Create a SessionLocal class that will be used to create DB sessions
-# - autocommit=False: changes won't be committed automatically
-# - autoflush=False: changes won't be flushed automatically
-# This gives you full control over when data is saved to the DB
+# Session factory (used in routes/services to talk to the DB)
 SessionLocal = sessionmaker(
     bind=engine,
     autoflush=False,
-    autocommit=False
+    autocommit=False,
 )
 
-# Create a base class from which all your models will inherit
-# This Base class is used by SQLAlchemy to create tables later
+# Base class for all SQLAlchemy ORM models (used with `User(Base)`)
 Base = declarative_base()
 
-
-
-# FastAPI dependency
+# FASTAPI routes with `Depends(get_db)`
 def get_db():
     db = SessionLocal()
     try:

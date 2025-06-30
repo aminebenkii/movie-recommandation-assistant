@@ -1,6 +1,6 @@
 import bcrypt
 from jose import JWTError, jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 
 # Constants (to be moved to .env later)
@@ -22,7 +22,7 @@ def create_access_token(data: dict, expires_in: int = 3600) -> str:
     # Make a copy of the input to avoid mutating the original
     payload = data.copy()
     # Add expiration time
-    expire = datetime.now(datetime.timezone.utc) + timedelta(seconds=expires_in)
+    expire = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
     # add expiry time to payload
     payload["exp"] = expire
     # create the token usiing out secret and algorith

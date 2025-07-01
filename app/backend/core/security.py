@@ -25,7 +25,7 @@ def create_access_token(data: dict, expires_in: int = 3600) -> str:
     expire = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
     # add expiry time to payload
     payload["exp"] = expire
-    # create the token usiing out secret and algorith
+    # create the token using our secret and algorithm
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
     return token
 

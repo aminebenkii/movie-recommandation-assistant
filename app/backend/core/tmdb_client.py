@@ -53,7 +53,7 @@ def discover_movies(filters: MovieSearchFilter) -> list[dict]:
     all_movies = []
     print("filters :", filters)
 
-    for page in range(1, 4): 
+    for page in range(1, 3): 
 
         params = {
             "api_key": TMDB_API_KEY,

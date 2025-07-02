@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 
 # Constants (to be moved to .env later)
 SECRET_KEY = "supersecretkey"  
-ALGORITHM = "HS256"            # Most common
+ALGORITHM = "HS256"            
 
 
 def hash_password(plain_password : str) -> str:

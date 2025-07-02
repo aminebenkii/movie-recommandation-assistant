@@ -8,7 +8,7 @@ class SeenMovie(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
-    movie_id = Column(String, nullable=False)
+    movie_id = Column(Integer, nullable=False)
 
     __table_args__ = (
         UniqueConstraint("user_id", "movie_id", name="_user_movie_uc"),

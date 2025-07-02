@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from pathlib import Path
 from app.backend.core.tmdb_client import discover_movies, get_trailers, get_imdb_id_from_tmdb
 from app.backend.core.omdb_client import get_imdb_details
@@ -6,6 +6,7 @@ from app.backend.schemas.movie import MovieCard, MovieSearchFilter
 from app.backend.utils.utils import read_json
 from sqlalchemy.orm import Session
 from app.backend.models.seen import SeenMovie
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 # Mappings File Directory : 
@@ -34,7 +35,7 @@ def map_id_to_genre(id : int) -> str:
 
 def fetch_seen_movie_ids(user_id: int, database: Session) -> list[int]:
     seen_movies = database.query(SeenMovie).filter(SeenMovie.user_id == user_id).all()
-    seen_movies_id_list = [movie.movie_id for movie in seen_movies]
+    seen_movies_id_list = [int(movie.movie_id) for movie in seen_movies]
     return seen_movies_id_list
 
 
@@ -44,24 +45,37 @@ def remove_seen_movies(movies: List[dict], seen_movie_ids: List[int]) -> List[di
     return unseen_movies
 
 
-def enrich_movies_with_imdb(movies: List[dict]) -> List[dict]:
-
-    for movie in movies: 
-
+def enrich_single_movie(movie: dict) -> Optional[dict]:
+    try:
         imdb_id = get_imdb_id_from_tmdb(movie["id"])
-
         if not imdb_id:
-            continue
+            return None
 
         imdb_details = get_imdb_details(imdb_id)
-
         imdb_rating = imdb_details.get("imdb_rating")
-        movie["imdb_rating"] = float(imdb_rating) if imdb_rating else None
-
         imdb_votes = imdb_details.get("imdb_votes")
+
+        movie["imdb_rating"] = float(imdb_rating) if imdb_rating else None
         movie["imdb_votes"] = int(imdb_votes.replace(",", "")) if imdb_votes else None
 
-    return movies
+        return movie
+
+    except Exception:
+        return None
+
+
+def enrich_movies_with_imdb(movies: List[dict]) -> List[dict]:
+    enriched_movies = []
+
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = {executor.submit(enrich_single_movie, movie): movie for movie in movies}
+
+        for future in as_completed(futures):
+            result = future.result()
+            if result:
+                enriched_movies.append(result)
+
+    return enriched_movies
 
 
 def rerank_and_pick_movies(movies: List[dict], filters: MovieSearchFilter, limit: int) -> List[dict]:
@@ -110,6 +124,8 @@ def convert_to_moviecards(movies: List[dict]) -> List[MovieCard]:
 
 def recommend_movies(filters: MovieSearchFilter, user_id: int, database: Session) -> List[MovieCard]:
     
+    print("user_id :", user_id)
+
     # Fill genre ID from name
     filters.genre_id = map_genre_to_id(filters.genre_name)
     print("genre id:", filters.genre_id)
@@ -118,12 +134,13 @@ def recommend_movies(filters: MovieSearchFilter, user_id: int, database: Session
     tmdb_movies = discover_movies(filters)
     if not tmdb_movies:
         return []
-
-    print("Generated movies :", len(tmdb_movies))
-    print(tmdb_movies[0])
+    print("Number of Generated tmdb movies :", len(tmdb_movies))
 
     # Step 2: Remove movies the user has already seen
     seen_ids = fetch_seen_movie_ids(user_id, database)
+    print("Seen movies :", len(seen_ids))
+    print("seen movie ids :", seen_ids)
+
     unseen_movies = remove_seen_movies(tmdb_movies, seen_ids)
     print("Unseen movies :", len(unseen_movies))
 
@@ -143,6 +160,3 @@ def recommend_movies(filters: MovieSearchFilter, user_id: int, database: Session
     return movie_cards
 
 
-
-
-# we will add OMDB Later for real imdb ratings ..... 

@@ -10,11 +10,11 @@ filters = MovieSearchFilter(
     genre_name="thriller",
     min_imdb_rating=6,
     min_imdb_votes=2000,
-    min_release_year=2012,
-    response_language="en-US"
+    min_release_year=2024,
+    response_language="fr-FR"
 )
 
-recommended_movies = recommend_movies(filters, user_id=1, database=db)
+recommended_movies = recommend_movies(filters, user_id=2, database=db)
 
 print(recommended_movies)
 

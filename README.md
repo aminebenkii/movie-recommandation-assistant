@@ -1,175 +1,236 @@
-# ✈️ Flight Sniper – AI-Powered Flight Deals Chatbot
+# 🎬 MoviesYouDidntWatch.com
 
-<p align="center">
-  <img src="./storage/snapshot.png" alt="Flight Sniper Demo" width="600" style="margin-top: 30px; margin-bottom: 30px;" />
-</p>
-
-
-
-Welcome to **Flight Sniper** — a conversational AI assistant that helps users find the cheapest flights based on their destination, travel dates, and budget.  
-It’s powered by GPT-4, understands natural language, and performs real-time flight searches using structured scraping logic.
+**A conversational movie recommender built with FastAPI + React + OpenAI**  
+Discover great films you've *never seen before* — in natural language.
 
 ---
 
-## 🧠 What It Does
+## 🚀 What Is It?
 
-- ✅ Conversational interface (natural language queries)
-- ✅ Step-by-step intent extraction (destination, dates, trip type, etc.)
-- ✅ Smart support for flexible or fixed dates
-- ✅ Flight price formatting with Markdown & emojis ✨
-- ✅ Built-in session handling (Firestore or local)
-- ✅ Fully dockerized and deployable
+**MoviesYouDidntWatch.com** is an intelligent, chat-based movie recommendation app designed for cinephiles. Using natural language, users can describe the kind of movie they want — and the system will reply with high-quality, unseen suggestions. It avoids repetition by keeping track of watched movies and leverages the power of OpenAI's GPT, TMDB, and OMDB APIs to recommend, filter, and enrich results.
 
 ---
 
-## 🖼️ Demo Use Cases
+## 🧠 Features
+
+- 🎙️ **Conversational Discovery**  
+  Ask for movies by genre, rating, mood, actor, etc. ("Give me a crime drama rated 8+")
+
+- 🙈 **Avoids Repetition**  
+  Automatically filters out movies you've already seen
+
+- ⭐ **High-Quality Results**  
+  Uses IMDb ratings and TMDB metadata to sort by quality
+
+- ▶️ **Watch Trailers Instantly**  
+  Pulls YouTube/TMDB trailers for instant previews
+
+- 🔐 **JWT-Based Auth System**  
+  Register/login with secure password handling
+
+- 🌐 **Multi-Language Ready**  
+  English/French toggle (frontend ready, backend integration WIP)
+
+---
+
+## 🏗 Architecture Overview
 
 ```
-"Find me a cheap round trip from Paris to Tokyo in August"
-"I'm on vacation between June 10 and 20, leaving from Madrid. Any good return flights to Lisbon?"
-"Show me one-way flights to Barcelona in early July for under €100"
+movie-recommender-chatbot/
+├── app/
+│   ├── backend/
+│   │   ├── api/
+│   │   │   ├── __init__.py
+│   │   │   ├── auth.py x            # Defines /auth/register and /auth/login endpoints, Receives credentials, calls auth_service, returns JWT
+│   │   │   ├── chat.py x            # Defines/chat endpoint, Accepts user message, calls LLM service and movie_service
+│   │   │   ├── seen.py x            # Defines /seen POST and GET, Lets user mark a movie as seen or fetch seen movies
+│   │   │   ├── users.py x           # Has a Route you can  call to get Information about you (as a user)
+│   │   │   ├── router.py x          # Gathers all routers (auth, chat, seen), Mounts them on the main FastAPI app
+│   │   │   └── 
+│   │   ├── core/
+│   │   │   ├── config.py x          # Loads and exposes app settings (.env vars, secrets)
+│   │   │   ├── openai_client.py x   # Wraps OpenAI GPT API calls (chat completions etc.)
+│   │   │   ├── tmdb_client.py x     # wraps tmdb requests calls ( discover_movies, get_trailers, get_genre_to_id, etc .. )
+│   │   │   ├── omdb_client.py x     # wraps omdb requests calls ( get_imdb_ratings.. )
+│   │   │   ├── database.py x        # Contains all SQL Database Init engine, Session, getdb, etc..
+│   │   │   ├── dependancies.py x    # Contains def to get_user_by_token ..
+│   │   │   └── security.py x        # Password hashing (bcrypt), JWT encode/decode logic
+│   │   │
+│   │   ├── models/
+│   │   │   ├── user.py x            # SQLAlchemy User model with id, name, email, password_hash
+│   │   │   ├── chat_session.py x    # (Optional) SQLAlchemy model to store conversations
+│   │   │   └── seen.py x            # SQLAlchemy model to store user_id + movie_id pairs
+│   │   │
+│   │   ├── schemas/
+│   │   │   ├── user.py x            # Pydantic models: UserRegister, UserLogin, UserResponse
+│   │   │   ├── chat.py x            # Pydantic models: ChatRequest, ChatResponse
+│   │   │   ├── movie.py x           # Pydantic models: MovieCard
+│   │   │   └── seen.py x            # Pydantic models for marking movies as seen (movie_id)
+│   │   │
+│   │   ├── services/
+│   │   │   ├── auth_service.py x    # Business logic for registering, logging in users, Verifies password, returns JWT.
+│   │   │   ├── llm_service.py x     # Sends message to OpenAI, Can include parsing/guiding the output
+│   │   │   ├── movie_service.py x   # Filters movie data based on query
+│   │   │   ├── session_service.py x # Optional for storing conversations
+│   │   │   └── seen_service.py x    # Tracks seen movies per user
+│   │   │
+│   │   ├── utils/
+│   │   │   └── utils.py x           # Generic helper functions
+│   │   │
+│   │   └── main.py                 # FastAPI app entrypoint
+│
+│   ├── frontend/
+│   │   ├── public/
+│   │   ├── src/
+│   │   │   ├── components/
+│   │   │   │   ├── ChatBox.jsx            # Chat UI (left panel)
+│   │   │   │   ├── MovieCard.jsx          # Card for each movie result (right panel)
+│   │   │   │   ├── AuthForm.jsx           # Shared form for login/register
+│   │   │   │   └── LanguageSelector.jsx   # French/English toggle button
+│   │   │   ├── pages/
+│   │   │   │   ├── Hero.jsx               # Landing page with language + auth buttons
+│   │   │   │   ├── Login.jsx              # Login form page
+│   │   │   │   ├── Register.jsx           # Registration page
+│   │   │   │   └── ChatPage.jsx           # Main app page – left: chat, right: movie grid
+│   │   │   ├── context/
+│   │   │   │   └── AuthContext.js         # Auth provider and JWT handling
+│   │   │   ├── App.jsx
+│   │   │   └── main.jsx
+│   │   └── tailwind.config.js
+│
+├── data/                         # Movie data (raw & processed)
+│   ├── raw/
+│   └── processed/
+│     └── genres_mapping.json     # dict to map id to genre and vice versa
+│
+├── storage/                      # Optional model or session storage
+├── tests/                        # Unit and integration tests
+├── .env                          # Environment variables: API keys, secrets
+├── .gitignore                    # Ignore __pycache__, .env, node_modules, etc.
+├── api_test.py                   # Quick script to test endpoints (curl, requests)
+├── DevNotes.md                   # This file you're reading
+├── Dockerfile                    # For containerizing the backend app
+├── README.md                     # Project intro, how to run, screenshots
+└── requirements.txt              # Python dependencies
+
 ```
-<p align="center">
-  <img src="./storage/snapshot2.png" alt="Flight Sniper Demo" width="400" style="margin-top: 30px; margin-bottom: 30px;" />
-</p>
+
+### ✨ Tech Stack
+
+| Layer        | Technology                             |
+|--------------|----------------------------------------|
+| Frontend     | React + TailwindCSS                    |
+| Backend      | FastAPI, Pydantic, SQLAlchemy          |
+| Database     | SQLite (dev), PostgreSQL (prod)        |
+| Auth         | JWT-based (bcrypt + token decoding)    |
+| LLM          | OpenAI GPT-4 via OpenAI API            |
+| Movie APIs   | TMDB (core data), OMDB (IMDb ratings)  |
+| Deployment   | AWS (Amplify/S3 + EC2/ECS + RDS)       |
 
 ---
 
-## 🤔 Why I Built This
+## 🧭 User Journey
 
-I wanted to build a real-world, production-quality AI assistant that combines LLMs with live data retrieval, intent orchestration, and a usable frontend. This project reflects my skills in NLP, APIs, UX, and deployment.
-It is also very useful for people that are not very good with going all around skyscanner or google flights to find the best combinations of flights. So it has real value to many users in the world.
+1. **Landing Page**  
+   - Choose language (EN/FR), log in or register
 
----
+2. **Register / Login**  
+   - Secure credentials sent to FastAPI auth endpoints
 
-## 🧱 Project Structure
+3. **Main App: Chat Interface**  
+   - Chat with the bot: "Find me a romantic comedy from the 90s"
+   - Get 10 smart suggestions in the movie grid
+   - Click ✅ **Seen** to mark a movie as watched
+   - ▶️ **Watch Trailer** to preview movies instantly
 
-```
-[plaintext]
-
-
-app/
-│
-├── backend/
-│   ├── main.py                         # Starts FastAPI app, serves static files, registers routes
-│   ├── config.json                     # Global settings (LLM model, system prompt, feature flags)
-│
-│   ├── api/
-│   │   └── chat_api.py                 # Entry point: receives user query, returns LLM response
-│
-│   ├── core/
-│   │   ├── config.py                   # get_config_value(), constants
-│   │   ├── llm_client.py               # LLM API client: payload builders + completion
-│   │   ├── llm_parser.py               # Handles [change] + [Do_Search] extraction from LLM response
-│   │   └── flight_engine.py            # Chooses which flight search method to use based on intent
-│
-│   ├── flights/
-│   │   ├── search_functions.py         # Actual scraping logic: get_one_way(), get_round_trip(), etc.
-│   │   └── formatters.py               # Formats search results as nice LLM text
-
-│
-│   ├── services/
-│   │   ├── local_session_service.py    # Load/save session with intent_state, chat history
-│   │   └── intent_service.py           # update_intent_object(), normalize intent fields
-│
-│   ├── utils/
-│   │   ├── logger.py                   # Logging setup
-│   │   └── utils.py                    # Generic helpers (e.g. load/save JSON, date utilities)
-│
-├── frontend/
-│   ├── index.html                      # Chat interface
-│   └── static/
-│       ├── fonts/
-│       ├── icons/
-│       └── js/
-│
-├── data/                               # Preprocessed data or static assets
-├── storage/                            # Session JSONs, maybe cached search results
-│   └── sessions/
-│
-├── Dockerfile
-├── .dockerignore
-├── .gitignore
-├── CLI_test.py                         # CLI interface for testing flows
-├── DevNotes.md                         # Architecture decisions and planning notes
-├── readme.md
-└── requirements.txt
-
-
-```
----
-
-## ⚙️ How It Works
-
-1. User sends a message via the frontend  
-2. Message is added to session history  
-3. GPT-4 is called to guide the conversation and decide whether to search  
-4. If user confirms, `[Do_Search]` is detected → flight scraper is triggered  
-5. Results are beautified via LLM and returned to the user in Markdown  
+4. **Seen Movies**  
+   - Seen movies are excluded from future suggestions  
+   - View future stats on `/me` page (planned)
 
 ---
 
-## 🔧 Run It Locally
+## 🛠 Key Endpoints
+
+| Endpoint         | Method | Auth? | Description                              |
+|------------------|--------|-------|------------------------------------------|
+| `/auth/register` | POST   | ❌    | Register a new user                      |
+| `/auth/login`    | POST   | ❌    | Authenticate user, return JWT            |
+| `/chat`          | POST   | ✅    | Submit message, receive movie suggestions|
+| `/seen`          | POST   | ✅    | Mark movie as seen                       |
+| `/seen`          | GET    | ✅    | Get all seen movies                      |
+| `/users/me`      | GET    | ✅    | Get current user info                    |
+
+---
+
+## ⚙️ How to Run Locally
+
+### 1. Backend (FastAPI)
 
 ```bash
-# 1. Clone
-git clone https://github.com/YOUR_USERNAME/flight-sniper.git
-cd flight-sniper
-
-# 2. Install Python packages
+cd app/backend
+python -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
-
-# 3. Set your OpenAI key
-echo "OPENAI_API_KEY=sk-..." > .env
-
-# 4. Choose Between SpotFire session storage or Local 
-from app.backend.services.firestore_session_service import load_or_create_session, save_session
-or from app.backend.services.local_session_service import load_or_create_session, save_session
-
-# 5. Run FastAPI server
-uvicorn app.backend.main:app --reload
+cp .env.example .env  # Add your TMDB, OMDB, OpenAI keys
+uvicorn main:app --reload
 ```
 
-Then open `localhost:8000` to chat.
-
----
-
-## 🐳 Docker Setup
+### 2. Frontend (React)
 
 ```bash
-docker build -t flight-sniper .
-docker run -p 8000:8000 flight-sniper
+cd app/frontend
+npm install
+npm run dev
 ```
 
 ---
 
-## ☁️ Deployment Tips
+## 🧪 Testing
 
-- 🔐 Restrict CORS origins in production  
-- 🔄 Use Firestore for persistent sessions  
-- 🌍 Host frontend + backend via Azure, AWS or GCP ..   
+```bash
+cd app/backend
+pytest
+```
 
----
+Or run the manual API tester:
 
-## 📌 Tech Stack
-
-- **FastAPI** – API backend  
-- **OpenAI GPT-4.0 / 4.1** – LLM engine  
-- **Firestore / JSON** – Session memory  
-- **fast_flights** – Flight scraping logic  
-- **Docker** – Deployment-ready containerization  
+```bash
+python api_test.py
+```
 
 ---
 
-## 📣 Author
+## 📈 Roadmap
 
-Made with ❤️ by [Amine Benkirane](https://www.linkedin.com/in/aminebenkirane-ml)  
-<sub>PS: The emoji formatting is intentional. Yes, I take cheap flights seriously.</sub>
+- [x] Auth system (JWT-based)
+- [x] Movie engine (filtering, seen-tracking)
+- [x] LLM + OpenAI integration
+- [ ] Regex fallback for filter extraction
+- [ ] `/me` route for user stats
+- [ ] Language-aware recommendations
+- [ ] Unit & integration tests
+- [ ] Frontend → backend wiring
 
 ---
 
-## 🚀 Next Ideas
+## 📄 License
 
-- Destination suggestions if user is flexible  
-- Add hotel or visa info scraping  
-- Chat history viewer for admins  
+MIT License © 2025 [Your Name or Team Name]
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome!  
+If you're interested in contributing, check out `DevNotes.md` for architecture and file structure.
+
+---
+
+## 📬 Contact
+
+Have suggestions, questions, or feedback?  
+Open an issue or reach out at: **you@example.com**
+
+---
+
+**MoviesYouDidntWatch.com** – _Helping you find your next favorite movie, not just the same old ones._

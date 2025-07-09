@@ -45,13 +45,11 @@ def get_imdb_id_from_tmdb(id: int) -> str:
     
     return data.get("imdb_id")
 
-
     
 def discover_movies(filters: MovieSearchFilter) -> list[dict]:
 
     url = f"{TMDB_BASE_URL}/discover/movie"
     all_movies = []
-    print("filters :", filters)
 
     for page in range(1, 3): 
 
@@ -68,7 +66,6 @@ def discover_movies(filters: MovieSearchFilter) -> list[dict]:
         }
 
         params = {key: value for key, value in params.items() if value is not None}
-        print("params :", params)
         
         try:
             response = requests.get(url, params=params, timeout=10)
@@ -80,8 +77,6 @@ def discover_movies(filters: MovieSearchFilter) -> list[dict]:
             continue
 
     return all_movies
-
-
 
 
 def get_trailers(movie_id : int) -> Optional[str]:

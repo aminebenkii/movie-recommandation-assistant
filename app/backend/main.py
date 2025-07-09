@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from app.backend.api.router import api_router
 from fastapi.middleware.cors import CORSMiddleware
 
-# Create app
 app = FastAPI(
     title="Movies You Didn't Watch",
     description="A Conversational movie recommender chatbot",

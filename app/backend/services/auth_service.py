@@ -1,7 +1,7 @@
 from typing import Tuple, Optional
 from sqlalchemy.orm import Session
 from app.backend.models.user import User
-from app.backend.schemas.user import UserCreate, UserLogin, TokenResponse
+from app.backend.schemas.user import UserCreate, UserLogin
 from app.backend.core.security import hash_password, verify_password, create_access_token
 
 
@@ -28,6 +28,7 @@ def register_user(user_data: UserCreate, database: Session) -> Tuple[bool, str]:
 
 def login_user(user_data: UserLogin, database: Session) -> Optional[str]:
 
+    # fetch user in the database:
     user = database.query(User).filter(User.email == user_data.email).first()
 
     if not user :

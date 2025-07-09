@@ -2,7 +2,6 @@ from app.backend.models.chat_session import ChatSession
 from sqlalchemy.orm import Session
 
 
-
 def get_or_create_chat_session(user_id: int, session_id : str, database: Session) -> ChatSession:
 
     existing_session = database.query(ChatSession).filter(
@@ -22,4 +21,5 @@ def get_or_create_chat_session(user_id: int, session_id : str, database: Session
         
         except Exception as e:
             database.rollback()
+            raise RuntimeError(f"Failed to create chat session: {str(e)}")
 

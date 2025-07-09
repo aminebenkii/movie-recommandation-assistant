@@ -4,12 +4,12 @@ from app.backend.models.seen import SeenMovie
 
 def mark_movie_as_seen(movie_id: int, database: Session, user_id: int):
 
-    alredy_marked_seen = database.query(SeenMovie).filter(
+    already_marked_seen = database.query(SeenMovie).filter(
         SeenMovie.movie_id == movie_id,
         SeenMovie.user_id == user_id
         ).first()
     
-    if alredy_marked_seen :
+    if already_marked_seen :
         return False, "Movie Already Marked as seen for user"
 
     try:

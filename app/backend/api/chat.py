@@ -35,7 +35,7 @@ def chat(payload: ChatRequest, user : User = Depends(get_current_user), database
     update_movie_panel = False
     recommended_movies = []
     
-    
+
     if action == "filters_requested":
 
         # set update_movie_panel to True
@@ -48,6 +48,9 @@ def chat(payload: ChatRequest, user : User = Depends(get_current_user), database
         movie_context_msg = movies_to_overviews_text(recommended_movies)
         chat_session.conversation.append({"role": "assistant", "content": movie_context_msg})
 
+
+    # Save Chatsession .. 
+    database.commit()
 
     return ChatResponse(
         response=cleaned_llm_completion,

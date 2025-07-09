@@ -1,6 +1,7 @@
 from app.backend.core.database import Base, engine
 from app.backend.models.user import User
 from app.backend.models.seen import SeenMovie
+from app.backend.models.chat_session import ChatSession
 
 def init():
     print("Dropping all tables...")

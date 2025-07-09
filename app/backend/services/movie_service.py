@@ -148,7 +148,7 @@ def recommend_movies(filters: MovieSearchFilter, user_id: int, database: Session
     imdb_enriched_movies = enrich_movies_with_imdb(unseen_movies)
 
     # Step 4: Rerank and filter based on IMDB criteria
-    top_movies = rerank_and_pick_movies(imdb_enriched_movies, filters, limit=10)
+    top_movies = rerank_and_pick_movies(imdb_enriched_movies, filters, limit=20)
     print("top_movies :", len(top_movies))
 
     # Step 5: Add trailers

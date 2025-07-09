@@ -7,11 +7,12 @@ from app.backend.schemas.movie import MovieSearchFilter
 db = SessionLocal()
 
 filters = MovieSearchFilter(
-    genre_name="thriller",
+    genre_name="comedy",
     min_imdb_rating=6,
-    min_imdb_votes=2000,
-    min_release_year=2024,
-    response_language="fr-FR"
+    min_imdb_votes=20000,
+    min_release_year=2000,
+    #response_language="fr-FR"
+    #origin_country="FR"
 )
 
 recommended_movies = recommend_movies(filters, user_id=2, database=db)

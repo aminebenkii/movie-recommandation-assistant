@@ -30,3 +30,6 @@ def get_current_user(token : HTTPAuthorizationCredentials = Depends(oauth2_schem
 
     return user
 
+
+def get_language():
+    return "en"

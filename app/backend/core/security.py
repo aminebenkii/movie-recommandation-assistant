@@ -1,11 +1,7 @@
 import bcrypt
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
-
-
-# Constants (to be moved to .env later)
-SECRET_KEY = "supersecretkey"  
-ALGORITHM = "HS256"            
+from app.backend.core.config import SECRET_KEY, ALGORITHM
 
 
 def hash_password(plain_password : str) -> str:

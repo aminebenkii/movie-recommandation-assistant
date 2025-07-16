@@ -1,9 +1,11 @@
 from app.backend.core.database import Base, engine
 from app.backend.models.user import User
-from app.backend.models.seen import SeenMovie
+from app.backend.models.user_movie import UserMovie
 from app.backend.models.chat_session import ChatSession
+from app.backend.models.movie import CachedMovie
 
 def init():
+    
     print("Dropping all tables...")
     Base.metadata.drop_all(bind=engine)
 

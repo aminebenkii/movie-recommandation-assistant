@@ -1,7 +1,7 @@
 import requests
 from typing import Optional
 from app.backend.core.config import TMDB_API_KEY
-from app.backend.schemas.movie import MovieSearchFilter
+from app.backend.schemas.movie import MovieSearchFilters
 
 
 TMDB_BASE_URL = "https://api.themoviedb.org/3"
@@ -30,60 +30,58 @@ def get_genres_mapping() -> dict:
     return mapping
 
 
-def get_imdb_id_from_tmdb(id: int) -> str:
+def call_tmdb_movie_details_endpoint(id: int, language:str) -> dict:
 
     url = f"{TMDB_BASE_URL}/movie/{id}"
     params = {
         "api_key": TMDB_API_KEY,
-        "language" : "en-US"
+        "language" : language
     }
     response = requests.get(url, params=params)
     response.raise_for_status()
-
-    # Parse Response:
     data = response.json() 
     
-    return data.get("imdb_id")
-
+    return data
     
-def discover_movies(filters: MovieSearchFilter) -> list[dict]:
+    
+def call_tmdb_discover_movies_endpoint(filters: MovieSearchFilters, language: str, page: int) -> list[dict]:
+    """
+    Low-level TMDB client to hit /discover/movie with filter + pagination.
+    """
 
     url = f"{TMDB_BASE_URL}/discover/movie"
-    all_movies = []
-
-    for page in range(1, 3): 
-
-        params = {
-            "api_key": TMDB_API_KEY,
-            "with_genres": filters.genre_id,
-            "primary_release_date.gte": f"{filters.min_release_year}-01-01" if filters.min_release_year else None,
-            "with_origin_country": filters.origin_country or None,
-            "vote_count.gte": 1000,
-            "vote_average.gte": 6,   #  Optional
-            "language": filters.response_language or "en-US",
-            "sort_by": "vote_average.desc",
-            "page": page,
-        }
-
-        params = {key: value for key, value in params.items() if value is not None}
+    params = {
+        "api_key": TMDB_API_KEY,
+        "with_genres": filters.genre_id,
+        "vote_average.gte": 6,    
+        "vote_count.gte": 1000,
+        "primary_release_date.gte": f"{filters.min_release_year}-01-01" if filters.min_release_year else None,
+        "primary_release_date.lte": f"{filters.max_release_year}-01-01" if filters.max_release_year else None,
+        "with_original_language": filters.original_language or None,
+        "sort_by": filters.sort_by or "popularity.desc",
+        "language": language or "en-US",
+        "page": page,
+    }
+    params = {key: value for key, value in params.items() if value is not None}
         
-        try:
-            response = requests.get(url, params=params, timeout=10)
-            response.raise_for_status()
-            data = response.json()
-            all_movies.extend(data.get("results", []))
-            
-        except requests.RequestException:
-            continue
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        movies = data.get("results", [])
+        return movies
+        
+    except requests.RequestException as e:
+        print(f"[TMDB ERROR] Discover call failed: {e} | page={page} | params={params}")
+        return []
+    
 
-    return all_movies
-
-
-def get_trailers(movie_id : int) -> Optional[str]:
+def call_tmdb_movie_videos_endpoint(movie_id : int, language: str) -> Optional[str]:
 
     url = f"{TMDB_BASE_URL}/movie/{movie_id}/videos"
     params = {
-        "api_key": TMDB_API_KEY
+        "api_key": TMDB_API_KEY,
+        "language": language or "en-US"
     }
     response = requests.get(url, params=params)
     response.raise_for_status()

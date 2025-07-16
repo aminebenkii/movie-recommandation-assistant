@@ -1,16 +1,13 @@
 from pydantic import BaseModel
-from typing import List
-from app.backend.schemas.movie import MovieCard
+from app.backend.schemas.movie import MovieCard, MovieSearchFilters
+from typing import Optional
 
-
-class ChatRequest(BaseModel):
-
+class ChatQuery(BaseModel):
     session_id: str
-    message: str
-
+    query: str
 
 class ChatResponse(BaseModel):
+    message: str
+    movies: list[MovieCard]
+    filters: Optional[MovieSearchFilters]
 
-    response: str
-    update_movie_panel: bool = False
-    recommended_movies: List[MovieCard] = []

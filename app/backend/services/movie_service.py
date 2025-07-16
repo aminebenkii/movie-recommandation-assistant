@@ -1,162 +1,185 @@
-from typing import List, Optional
-from pathlib import Path
-from app.backend.core.tmdb_client import discover_movies, get_trailers, get_imdb_id_from_tmdb
-from app.backend.core.omdb_client import get_imdb_details
-from app.backend.schemas.movie import MovieCard, MovieSearchFilter
-from app.backend.utils.utils import read_json
 from sqlalchemy.orm import Session
-from app.backend.models.seen import SeenMovie
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from app.backend.core.database import SessionLocal
+from datetime import datetime, timedelta, date
+from app.backend.schemas.movie import MovieSearchFilters, MovieCard
+from app.backend.models.movie import CachedMovie
+from app.backend.models.user_movie import UserMovie
+from app.backend.utils.utils import map_genre_to_id, map_id_to_genre
+from app.backend.core.tmdb_client import call_tmdb_discover_movies_endpoint, call_tmdb_movie_details_endpoint, call_tmdb_movie_videos_endpoint
+from app.backend.core.omdb_client import call_omdb_client
 
+from functools import partial
+from concurrent.futures import ThreadPoolExecutors
 
-# Mappings File Directory : 
-ROOT_DIR = Path(__file__).resolve().parents[3]
-MAPPING_FILE_PATH = ROOT_DIR / "data" / "processed" / "genres_mapping.json"
+def recommend_movies(filters: MovieSearchFilters, user_id: int, db: Session, language: str) -> list[MovieCard]:
+    """
+    Recommends a list of high-quality movies that the user hasn't seen,
+    based on filters + User history. Pulls from TMDB, enriches with OMDB,
+    caches to DB if needed, and returns fully enriched MovieCards.
+    """
 
-# Load Genre Mapping only once:
-GENRE_MAPPING = read_json(MAPPING_FILE_PATH)
+    raw_new_movies = fetch_new_tmdb_movies(filters, user_id, db, language) 
 
+    tmdb_ids = enrich_and_cache_movies_to_db(raw_new_movies, language)
 
-def map_genre_to_id(genre : str) -> int:
-    mapping = GENRE_MAPPING.get("genre_to_id")
-    genre_id = mapping.get(genre.lower().strip())
-    if genre_id is None:
-        raise ValueError(f"Genre {genre} not found in mapping")
-    return genre_id
+    cache_movies = fetch_movies_from_cache(tmdb_ids, db)
 
+    reranked = rerank_movies(cache_movies, filters.sort_by)
 
-def map_id_to_genre(id : int) -> str:
-    mapping = GENRE_MAPPING.get("id_to_genre")
-    genre_name = mapping.get(str(id))
-    if genre_name is None:
-        raise ValueError(f"Genre with id : {id}, was not found in mapping.")
-    return genre_name.lower()
-
-
-def fetch_seen_movie_ids(user_id: int, database: Session) -> list[int]:
-    seen_movies = database.query(SeenMovie).filter(SeenMovie.user_id == user_id).all()
-    seen_movies_id_list = [int(movie.movie_id) for movie in seen_movies]
-    return seen_movies_id_list
-
-
-def remove_seen_movies(movies: List[dict], seen_movie_ids: List[int]) -> List[dict]:
-    seen_set = set(seen_movie_ids)
-    unseen_movies = [movie for movie in movies if movie["id"] not in seen_set]
-    return unseen_movies
-
-
-def enrich_single_movie(movie: dict) -> Optional[dict]:
-    try:
-        imdb_id = get_imdb_id_from_tmdb(movie["id"])
-        if not imdb_id:
-            return None
-
-        imdb_details = get_imdb_details(imdb_id)
-        imdb_rating = imdb_details.get("imdb_rating")
-        imdb_votes = imdb_details.get("imdb_votes")
-
-        movie["imdb_rating"] = float(imdb_rating) if imdb_rating else None
-        movie["imdb_votes"] = int(imdb_votes.replace(",", "")) if imdb_votes else None
-
-        return movie
-
-    except Exception:
-        return None
-
-
-def enrich_movies_with_imdb(movies: List[dict]) -> List[dict]:
-    enriched_movies = []
-
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        futures = {executor.submit(enrich_single_movie, movie): movie for movie in movies}
-
-        for future in as_completed(futures):
-            result = future.result()
-            if result:
-                enriched_movies.append(result)
-
-    return enriched_movies
-
-
-def rerank_and_pick_movies(movies: List[dict], filters: MovieSearchFilter, limit: int) -> List[dict]:
-    min_rating = filters.min_imdb_rating or 0.0
-    min_votes = filters.min_imdb_votes or 0
-
-    filtered = [
-        m for m in movies
-        if (m.get("imdb_rating") is not None and m.get("imdb_rating") >= min_rating)
-        and (m.get("imdb_votes") is not None and m.get("imdb_votes") >= min_votes)
-    ]
-
-    reranked = sorted(filtered, key=lambda x: x.get("imdb_rating", 0.0), reverse=True)
-
-    return reranked[:limit]
-
-
-def enrich_movies_with_trailers(movies: List[dict]) -> List[dict]:
-    for movie in movies:
-        try:
-            trailer_url = get_trailers(movie["id"])
-        except Exception as e:
-            trailer_url = ""
-        movie["trailer_url"] = trailer_url or ""
-    return movies
-
-
-def convert_to_moviecards(movies: List[dict]) -> List[MovieCard]:
-    
-    cards = []
-    for movie in movies:
-        cards.append(MovieCard(
-            id=movie.get("id"),
-            title=movie.get("title") or movie.get("original_title", ""),
-            genre_names=[map_id_to_genre(genre_id) for genre_id in movie.get("genre_ids", [])],
-            imdb_rating=movie.get("imdb_rating", 0),
-            imdb_votes=movie.get("imdb_votes", 0),
-            release_year=int(movie.get("release_date")[:4]) if movie.get("release_date") else None,
-            poster_url=f"https://image.tmdb.org/t/p/w500{movie['poster_path']}" if movie.get("poster_path") else None,
-            trailer_url=movie.get("trailer_url"),
-            overview=movie.get("overview", "")
-            ))
-
-    return cards
-
-
-def recommend_movies(filters: MovieSearchFilter, user_id: int, database: Session) -> List[MovieCard]:
-    
-    print("user_id :", user_id)
-
-    # Fill genre ID from name
-    filters.genre_id = map_genre_to_id(filters.genre_name)
-    print("genre id:", filters.genre_id)
-
-    # Step 1: Discover movies from TMDB
-    tmdb_movies = discover_movies(filters)
-    if not tmdb_movies:
-        return []
-    print("Number of Generated tmdb movies :", len(tmdb_movies))
-
-    # Step 2: Remove movies the user has already seen
-    seen_ids = fetch_seen_movie_ids(user_id, database)
-    print("Seen movies :", len(seen_ids))
-    print("seen movie ids :", seen_ids)
-
-    unseen_movies = remove_seen_movies(tmdb_movies, seen_ids)
-    print("Unseen movies :", len(unseen_movies))
-
-    # Step 3: Enrich with IMDB ratings and votes
-    imdb_enriched_movies = enrich_movies_with_imdb(unseen_movies)
-
-    # Step 4: Rerank and filter based on IMDB criteria
-    top_movies = rerank_and_pick_movies(imdb_enriched_movies, filters, limit=20)
-    print("top_movies :", len(top_movies))
-
-    # Step 5: Add trailers
-    final_movies_data = enrich_movies_with_trailers(top_movies)
-
-    # Step 6: Convert to MovieCard pydantic models
-    movie_cards = convert_to_moviecards(final_movies_data)
+    movie_cards =  [to_movie_card(m, language) for m in reranked]
 
     return movie_cards
 
+
+def fetch_new_tmdb_movies(filters: MovieSearchFilters, user_id: int, db: Session, language: str) -> list[dict]:
+    """
+    Fetch up to 30 TMDB movies that:
+    - Match the genre filter (genre in position 1 or 2)
+    - Have not been marked by the user (seen, later, not_interested)
+    """
+
+    excluded_ids = {
+        row.tmdb_id for row in db.query(UserMovie).filter(
+            UserMovie.user_id == user_id,
+            UserMovie.status.in_(["seen", "later", "not_interested"])
+        )
+    }
+
+    results = []
+    page = 1
+
+    while len(results) < 30 and page <= 10:
+        candidates = call_tmdb_discover_movies_endpoint(filters, language, page)
+        for movie in candidates:
+            if filters.genre_id in movie["genre_ids"][:2] and movie["id"] not in excluded_ids:
+                results.append(movie)
+                if len(results) == 30:
+                    break
+        page += 1
+
+    return results
+
+
+def enrich_and_cache_one_movie_to_db(movie_dict: dict, language: str):
+    """
+    Enrich a single movie with IMDb rating, vote count, trailer URLs,
+    multilingual title/overview, and cache it into the DB.
+    Creates its own DB session (thread-safe).
+    """
+    db = SessionLocal()
+    try:
+        tmdb_id = movie_dict["id"]
+        cached_movie = db.query(CachedMovie).filter(CachedMovie.tmdb_id == tmdb_id).first()
+        freshly_cached = cached_movie and (date.today() - cached_movie.cache_update_date).days <= 7
+
+        if cached_movie:
+            if not freshly_cached:
+                imdb_data = call_omdb_client(cached_movie.imdb_id)
+                cached_movie.imdb_rating = float(imdb_data.get("imdb_rating") or 0)
+                cached_movie.imdb_votes_count = int(imdb_data.get("imdb_votes_count", "0").replace(",", ""))
+                cached_movie.cache_update_date = date.today()
+                db.commit()
+
+        else:
+            # Fetch from TMDB & OMDB in opposite language
+            other_lang = "fr" if language == "en" else "en"
+            tmdb_details = call_tmdb_movie_details_endpoint(tmdb_id, other_lang)
+            imdb_data = call_omdb_client(tmdb_details["imdb_id"])
+            genre_ids = movie_dict.get("genre_ids", [])
+
+            new_movie = CachedMovie(
+                tmdb_id=tmdb_id,
+                imdb_id=tmdb_details["imdb_id"],
+                imdb_rating=float(imdb_data.get("imdb_rating") or 0),
+                imdb_votes_count=int(imdb_data.get("imdb_votes_count", "0").replace(",", "")),
+                release_year=int(movie_dict.get("release_date", "0000")[:4]),
+                poster_url=f"https://image.tmdb.org/t/p/original{movie_dict.get('poster_path')}" if movie_dict.get("poster_path") else None,
+                title_en=movie_dict.get("title") if language == "en" else tmdb_details.get("title"),
+                title_fr=movie_dict.get("title") if language == "fr" else tmdb_details.get("title"),
+                genre_ids=genre_ids,
+                genre_names_en=[map_id_to_genre(gid, "en") for gid in genre_ids],
+                genre_names_fr=[map_id_to_genre(gid, "fr") for gid in genre_ids],
+                trailer_url_en=call_tmdb_movie_videos_endpoint(tmdb_id, "en"),
+                trailer_url_fr=call_tmdb_movie_videos_endpoint(tmdb_id, "fr"),
+                overview_en=movie_dict.get("overview") if language == "en" else tmdb_details.get("overview"),
+                overview_fr=movie_dict.get("overview") if language == "fr" else tmdb_details.get("overview"),
+                cache_update_date=date.today()
+            )
+
+            db.add(new_movie)
+            db.commit()
+
+    except Exception as e:
+        print(f"[Thread] Error enriching TMDB ID {movie_dict.get('id')}: {e}")
+        db.rollback()
+    finally:
+        db.close()
+
+
+
+def enrich_and_cache_movies_to_db(movies: list[dict], language: str) -> list[int]:
+    """
+    Enrich and cache a list of movies in parallel (IMDb, trailer, genres).
+    Each thread manages its own DB session.
+    Returns the list of tmdb_ids that were processed.
+    """
+    task = partial(enrich_and_cache_one_movie_to_db, language=language)
+
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        executor.map(task, movies)
+
+    return [m["id"] for m in movies]
+
+
+def fetch_movies_from_cache(tmdb_ids: list[int], db: Session) -> list[CachedMovie]:
+    """
+    Fetches CachedMovie entries from DB based on tmdb_ids.
+    Preserves input order from TMDB.
+    """
+    if not tmdb_ids:
+        return []
+
+    # 1. Batch query
+    movies = db.query(CachedMovie).filter(CachedMovie.tmdb_id.in_(tmdb_ids)).all()
+
+    # 2. Preserve input order
+    order_map = {tmdb_id: i for i, tmdb_id in enumerate(tmdb_ids)}
+    movies.sort(key=lambda m: order_map.get(m.tmdb_id, float('inf')))
+
+    return movies
+
+
+def rerank_movies(movies: list[CachedMovie], sort_by: str) -> list[CachedMovie]:
+    """
+    Optionally rerank movies based on IMDb rating or vote count.
+    Falls back to original TMDB order if sort_by is "popularity.desc".
+    """
+    if sort_by == "vote_average.desc":
+        return sorted(movies, key=lambda m: m.imdb_rating or 0.0, reverse=True)
+
+    if sort_by == "vote_count.desc":
+        return sorted(movies, key=lambda m: m.imdb_votes_count or 0, reverse=True)
+
+    # "popularity.desc" or unknown sort → no reranking
+    return movies
+
+
+def to_movie_card(movie: CachedMovie, language: str) -> MovieCard:
+    """
+    Converts a CachedMovie DB model to a Pydantic MovieCard,
+    using the correct language (EN/FR) for title, overview, genres, and trailer.
+    """
+    is_french = language == "fr"
+
+    return MovieCard(
+        tmdb_id=movie.tmdb_id,
+        title=movie.title_fr if is_french else movie.title_en,
+        genre_names=movie.genre_names_fr if is_french else movie.genre_names_en,
+        release_year=movie.release_year,
+        imdb_rating=movie.imdb_rating,
+        imdb_votes_count=movie.imdb_votes_count,
+        poster_url=movie.poster_url,
+        trailer_url=movie.trailer_url_fr if is_french else movie.trailer_url_en,
+        overview=movie.overview_fr if is_french else movie.overview_en
+    )
 

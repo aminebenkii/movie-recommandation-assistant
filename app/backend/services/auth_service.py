@@ -5,9 +5,8 @@ from app.backend.schemas.user import UserCreate, UserLogin
 from app.backend.core.security import hash_password, verify_password, create_access_token
 
 
-def register_user(user_data: UserCreate, database: Session) -> Tuple[bool, str]:
+def signup_user(user_data: UserCreate, database: Session) -> Tuple[bool, str]:
     
-    # check if the email already exists :
     email_exists =  database.query(User).filter(User.email == user_data.email).first()
     if email_exists : 
         return False, "Email already exists"
@@ -21,24 +20,20 @@ def register_user(user_data: UserCreate, database: Session) -> Tuple[bool, str]:
 
     database.add(new_user)
     database.commit()
-
     return True, "User registered successfully"
 
 
 
-def login_user(user_data: UserLogin, database: Session) -> Optional[str]:
+def login_user(user_data: UserLogin, database: Session) -> Tuple[Optional[str], User]:
 
-    # fetch user in the database:
     user = database.query(User).filter(User.email == user_data.email).first()
-
     if not user :
         return None
-
     if not verify_password(user_data.password, user.password_hash):
         return None
 
     token = create_access_token({"sub": user.email})
-    return token
+    return token, user
 
 
 

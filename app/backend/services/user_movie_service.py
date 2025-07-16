@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session 
 from app.backend.models.user_movie import UserMovie
-from app.backend.models.movie import Movie
+from app.backend.services.movie_service import fetch_movies_from_cache, to_movie_card
 from typing import Tuple
-
+from app.backend.schemas.movie import MovieListResponse
 
 def update_user_movie_status(movie_id: int, user_id: int, database: Session, status: str) -> Tuple[bool, str]:
     try :
@@ -33,13 +33,14 @@ def update_user_movie_status(movie_id: int, user_id: int, database: Session, sta
         return False, f"Database Error : {e}"
 
 
-def get_moviecards_by_status(user_id: int, database: Session, status: str):
+def get_user_movies_by_status(user_id: int, database: Session, status: str, language: str) -> MovieListResponse:
 
-    user_movies = (
-        database.query(Movie)
-        .join(UserMovie, Movie.id == UserMovie.movie_id)
+    listed_ids,_ = (
+        database.query(UserMovie.tmdb_id)
         .filter(UserMovie.user_id == user_id, UserMovie.status == status)
         .all()
     )
 
-    return user_movies
+    cache_movies = fetch_movies_from_cache(listed_ids, database)
+
+    return [to_movie_card(m, language) for m in cache_movies]

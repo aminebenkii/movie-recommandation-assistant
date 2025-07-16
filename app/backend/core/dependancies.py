@@ -1,5 +1,4 @@
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, status, Header
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.backend.models.user import User
@@ -31,5 +30,14 @@ def get_current_user(token : HTTPAuthorizationCredentials = Depends(oauth2_schem
     return user
 
 
-def get_language():
+
+def get_language(accept_language: str = Header(default="en", convert_underscores=False)) -> str:
+    """
+    Extracts the language preference from the Accept-Language header.
+    Supports 'en' or 'fr'. Defaults to 'en'.
+    
+    lang = accept_language.lower().split(",")[0].strip()
+    if lang.startswith("fr"):
+        return "fr"
+    """
     return "en"

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, Depends
-from app.backend.schemas.chat import ChatRequest, ChatResponse
+from app.backend.schemas.chat import ChatQuery, ChatResponse
 from sqlalchemy.orm import Session
 from app.backend.core.database import get_db
 from app.backend.models.user import User
@@ -11,8 +11,8 @@ from app.backend.services.movie_service import recommend_movies
 
 router = APIRouter()
 
-@router.post("/chat", response_model= ChatResponse)
-def chat(payload: ChatRequest, user : User = Depends(get_current_user), database: Session = Depends(get_db)):
+@router.post("", response_model= ChatResponse)
+def chat(payload: ChatQuery, user : User = Depends(get_current_user), database: Session = Depends(get_db)):
 
     # Get Chat Session from db:
     chat_session = get_or_create_chat_session(user.id, payload.session_id, database)

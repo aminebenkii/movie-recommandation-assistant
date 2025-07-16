@@ -6,12 +6,12 @@ from app.backend.core.database import SessionLocal
 db: Session = SessionLocal()
 
 filters = MovieSearchFilters(
-    genre_id=53,  # Drama
+    genre_id=35,  # Drama
     min_release_year=2010,
     max_release_year=2023,
     min_imdb_rating=7.0,
     min_imdb_votes_count=1000,
-    sort_by="vote_average.desc"
+    sort_by="vote_count.desc"
 )
 
 def print_movie_card(card):

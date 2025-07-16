@@ -1,6 +1,6 @@
-from app.backend.schemas.movie import MovieSearchFilter
+from app.backend.schemas.movie import MovieSearchFilters
 
-def parse_filter_line(line: str) -> MovieSearchFilter:
+def parse_filter_line(line: str) -> MovieSearchFilters:
     line = line.replace("[filters_requested]", "").strip()
     parts = line.split(",")
     filter_kwargs = {}
@@ -25,4 +25,4 @@ def parse_filter_line(line: str) -> MovieSearchFilter:
         elif key == "response_language":
             filter_kwargs["response_language"] = value.lower()
 
-    return MovieSearchFilter(**filter_kwargs)
+    return MovieSearchFilters(**filter_kwargs)

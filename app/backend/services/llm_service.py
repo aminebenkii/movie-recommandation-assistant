@@ -1,7 +1,7 @@
 
 from app.backend.core.openai_client import get_openai_completion, build_openai_payload
 from app.backend.services.parser_service import parse_filter_line
-from app.backend.schemas.movie import MovieCard, MovieSearchFilter
+from app.backend.schemas.movie import MovieCard, MovieSearchFilters
 from typing import List, Dict, Tuple, Optional
 
 
@@ -12,7 +12,7 @@ def get_llm_response(conversation : List[Dict[str, str]]) -> str:
     return llm_answer
 
 
-def parse_llm_response(llm_response: str) -> Tuple[Optional[str], Optional[MovieSearchFilter], str]:
+def parse_llm_response(llm_response: str) -> Tuple[Optional[str], Optional[MovieSearchFilters], str]:
     lines = llm_response.strip().split("\n")
     filter_line = None
     cleaned_lines = []

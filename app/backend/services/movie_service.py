@@ -9,7 +9,7 @@ from app.backend.core.tmdb_client import call_tmdb_discover_movies_endpoint, cal
 from app.backend.core.omdb_client import call_omdb_client
 
 from functools import partial
-from concurrent.futures import ThreadPoolExecutors
+from concurrent.futures import ThreadPoolExecutor
 
 def recommend_movies(filters: MovieSearchFilters, user_id: int, db: Session, language: str) -> list[MovieCard]:
     """
@@ -114,7 +114,6 @@ def enrich_and_cache_one_movie_to_db(movie_dict: dict, language: str):
         db.rollback()
     finally:
         db.close()
-
 
 
 def enrich_and_cache_movies_to_db(movies: list[dict], language: str) -> list[int]:

@@ -58,6 +58,7 @@ def fetch_new_tmdb_movies(filters: MovieSearchFilters, user_id: int, db: Session
                     results.append(movie)
                     if len(results) == 30:
                         break
+        
         page += 1
 
     return results

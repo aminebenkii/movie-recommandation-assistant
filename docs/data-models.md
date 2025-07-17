@@ -69,7 +69,7 @@ class UserMovie(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    movie_id = Column(Integer, ForeignKey("movies.id", ondelete="CASCADE"))
+    tmdb_id = Column(Integer, ondelete="CASCADE")
 
     status = Column(Enum("seen", "later", "not_interested", name="movie_status"), nullable=True)
     updated_at = Column(DateTime, default=datetime.utcnow)

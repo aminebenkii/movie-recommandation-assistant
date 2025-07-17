@@ -17,6 +17,8 @@ def read_json(path):
 GENRE_MAPPING = read_json(MAPPING_FILE_PATH)
 
 def map_genre_to_id(genre : str) -> int:
+    if not genre:
+        return None
     mapping = GENRE_MAPPING.get("genre_to_id")
     genre_id = mapping.get(genre.lower().strip())
     if genre_id is None:

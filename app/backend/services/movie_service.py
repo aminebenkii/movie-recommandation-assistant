@@ -18,6 +18,8 @@ def recommend_movies(filters: MovieSearchFilters, user_id: int, db: Session, lan
     caches to DB if needed, and returns fully enriched MovieCards.
     """
 
+    print(filters)
+
     raw_new_movies = fetch_new_tmdb_movies(filters, user_id, db, language) 
 
     tmdb_ids = enrich_and_cache_movies_to_db(raw_new_movies, language)
@@ -51,10 +53,11 @@ def fetch_new_tmdb_movies(filters: MovieSearchFilters, user_id: int, db: Session
     while len(results) < 30 and page <= 10:
         candidates = call_tmdb_discover_movies_endpoint(filters, language, page)
         for movie in candidates:
-            if filters.genre_id in movie["genre_ids"][:2] and movie["id"] not in excluded_ids:
-                results.append(movie)
-                if len(results) == 30:
-                    break
+            if filters.genre_id is None or filters.genre_id in movie["genre_ids"][:2]:
+                if movie["id"] not in excluded_ids:
+                    results.append(movie)
+                    if len(results) == 30:
+                        break
         page += 1
 
     return results

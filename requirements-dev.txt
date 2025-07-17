@@ -1,0 +1,11 @@
+# Dev tools for linting + testing
+pytest
+pytest-asyncio
+httpx
+coverage
+pytest-cov
+black
+isort
+flake8
+mypy
+pre-commit

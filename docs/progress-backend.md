@@ -8,7 +8,6 @@ Tracking which Python files are implemented, need testing, or still require work
 
 | File              | Status             | Notes |
 |-------------------|--------------------|-------|
-| `__init__.py`     | ✅ DONE             | |
 | `auth.py`         | ✅ DONE             | All good |
 | `chat.py`         | 🔧 TODO             | Lots missing |
 | `users.py`        | 🧪 DONE, to be tested | Routes in place |

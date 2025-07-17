@@ -14,12 +14,14 @@ router = APIRouter()
 def update_status(
     payload: MovieStatusUpdate, 
     db: Session = Depends(get_db), 
-    user: User = Depends(get_current_user)):
+    user: User = Depends(get_current_user)
+):
 
-    success, message = update_user_movie_status(payload.movie_id, user.id, db, payload.status)
+    success, message = update_user_movie_status(payload.tmdb_id, user.id, db, payload.status)
+
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
-    return {"message": "movie status updated"}
 
+    return {"message": "movie status updated"}
 
 

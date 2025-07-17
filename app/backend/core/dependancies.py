@@ -7,6 +7,10 @@ from sqlalchemy.orm import Session
 from app.backend.core.security import decode_access_token
 from app.backend.core.database import get_db
 
+from typing import Optional
+
+
+
 oauth2_scheme = HTTPBearer()
 
 def get_current_user(token : HTTPAuthorizationCredentials = Depends(oauth2_scheme) , database : Session = Depends(get_db)) -> User : 
@@ -31,13 +35,17 @@ def get_current_user(token : HTTPAuthorizationCredentials = Depends(oauth2_schem
 
 
 
-def get_language(accept_language: str = Header(default="en", convert_underscores=False)) -> str:
-    """
-    Extracts the language preference from the Accept-Language header.
-    Supports 'en' or 'fr'. Defaults to 'en'.
-    
-    lang = accept_language.lower().split(",")[0].strip()
-    if lang.startswith("fr"):
-        return "fr"
-    """
+def get_language(accept_language: Optional[str] = Header(default=None)) -> str:
+    print("🔍 Raw Accept-Language:", accept_language)
+    if not accept_language:
+        print("⚠️ Header missing entirely")
+        return "en"
+
+    try:
+        lang = accept_language.split(",")[0].lower().strip()
+        if lang.startswith("fr"):
+            return "fr"
+    except Exception as e:
+        print("⚠️ Error parsing language:", e)
+
     return "en"

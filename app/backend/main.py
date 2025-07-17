@@ -28,3 +28,4 @@ app.include_router(api_router)
 async def health_check():
     return {"status": "ok"}
 
+

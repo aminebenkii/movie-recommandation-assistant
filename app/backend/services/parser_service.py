@@ -1,4 +1,5 @@
-from app.backend.schemas.movie import MovieSearchFilters
+from app.backend.schemas.movie_schemas import MovieSearchFilters
+
 
 def parse_filter_line(line: str) -> MovieSearchFilters:
     line = line.replace("[filters_requested]", "").strip()
@@ -6,7 +7,7 @@ def parse_filter_line(line: str) -> MovieSearchFilters:
     filter_kwargs = {}
 
     for part in parts:
-        if '=' not in part:
+        if "=" not in part:
             continue
         key, value = part.split("=", 1)
         key = key.strip()

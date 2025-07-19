@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class UserStats(BaseModel):
     total_seen: int
     top_genres: list[str]

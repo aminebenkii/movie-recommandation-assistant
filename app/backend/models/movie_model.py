@@ -8,7 +8,7 @@ class CachedMovie(Base):
 
     __tablename__ = "movies"
 
-    id = Column(Integer,primary_key=True, index=True )
+    id = Column(Integer, primary_key=True, index=True)
     tmdb_id = Column(Integer, index=True, unique=True)
     imdb_id = Column(String, nullable=False, unique=True)
 
@@ -35,6 +35,6 @@ class CachedMovie(Base):
     cache_update_date = Column(Date, nullable=False, default=date.today)
 
     def __repr__(self):
-        return f"<Movie(tmdb_id : {self.tmdb_id}, cached on : {self.cache_update_date})>"
-
-
+        return (
+            f"<Movie(tmdb_id : {self.tmdb_id}, cached on : {self.cache_update_date})>"
+        )

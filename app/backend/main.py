@@ -6,8 +6,8 @@ app = FastAPI(
     title="Movies You Didn't Watch",
     description="A Conversational movie recommender chatbot",
     version="1.0.0",
-    docs_url="/docs",     
-    redoc_url=None        
+    docs_url="/docs",
+    redoc_url=None,
 )
 
 # Allow frontend to connect
@@ -16,16 +16,14 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 # mount all routes
-app.include_router(api_router) 
+app.include_router(api_router)
 
 
 # Health Check endpoint
 @app.get("/health", tags=["Health"])
 async def health_check():
     return {"status": "ok"}
-
-

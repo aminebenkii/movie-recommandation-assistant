@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.backend.schemas.movie import MovieSearchFilters
+from app.backend.schemas.movie_schemas import MovieSearchFilters
 from app.backend.services.movie_service import recommend_movies
 from app.backend.core.database import SessionLocal
 
@@ -11,8 +11,9 @@ filters = MovieSearchFilters(
     max_release_year=2023,
     min_imdb_rating=7.0,
     min_imdb_votes_count=1000,
-    sort_by="vote_count.desc"
+    sort_by="vote_count.desc",
 )
+
 
 def print_movie_card(card):
     print(f"🎬 {card.title} ({card.release_year})")
@@ -21,6 +22,7 @@ def print_movie_card(card):
     print(f"🎞️ Trailer: {card.trailer_url}")
     print(f"📝 {card.overview[:200]}..." if card.overview else "")
     print("—" * 60)
+
 
 print("\n🇫🇷 🔥 Recommandations dramatiques (FR):\n")
 movies_fr = recommend_movies(filters, user_id=1, db=db, language="fr")

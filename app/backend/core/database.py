@@ -16,6 +16,7 @@ SessionLocal = sessionmaker(
     autocommit=False,
 )
 
+
 # FASTAPI routes with `Depends(get_db)`
 def get_db():
     db = SessionLocal()

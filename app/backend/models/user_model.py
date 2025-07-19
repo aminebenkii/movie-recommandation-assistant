@@ -4,14 +4,14 @@ from datetime import datetime
 
 
 class User(Base):
-    
+
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True, index=True)
-    password_hash = Column(String, nullable= False)
+    password_hash = Column(String, nullable=False)
     joined = Column(DateTime, default=datetime.now)
 
     def __repr__(self):

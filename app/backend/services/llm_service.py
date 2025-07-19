@@ -1,73 +1,82 @@
-
 from app.backend.core.openai_client import get_openai_completion, build_openai_payload
 from app.backend.services.parser_service import parse_filter_line
-from app.backend.schemas.movie import MovieCard, MovieSearchFilters
+from app.backend.schemas.movie_schemas import MovieCard, MovieSearchFilters
 from typing import List, Dict, Tuple, Optional
+import re
 
 
-
-def get_llm_response(conversation : List[Dict[str, str]]) -> str:
+def get_llm_response(conversation: List[Dict[str, str]]) -> str:
     payload = build_openai_payload(conversation)
     llm_answer = get_openai_completion(payload)
     return llm_answer
 
 
-def parse_llm_response(llm_response: str) -> Tuple[Optional[str], Optional[MovieSearchFilters], str]:
-    lines = llm_response.strip().split("\n")
-    filter_line = None
-    cleaned_lines = []
+def parse_llm_response(llm_text: str) -> Tuple[str, Optional[str], Optional[str], Optional[MovieSearchFilters]]:
 
-    for line in lines:
-        if line.startswith("[filters_requested]"):
-            filter_line = line  
-        else:
-            cleaned_lines.append(line)
-
+    # Defaults
     action = None
-    filter_obj = None
+    filters = None
+    movie_name = None
 
-    if filter_line:
-        filter_obj = parse_filter_line(filter_line)
-        action = "filters_requested"  
+    # Check for filters
+    if "[filters]" in llm_text:
+        action = "filters"
+        filters_block = llm_text.split("[filters]")[1].strip()
 
-    cleaned_llm_output = "\n".join(cleaned_lines).strip()
-    return action, filter_obj, cleaned_llm_output
+        filters_dict = {}
+        for part in filters_block.split(","):
+            key, value = part.strip().split("=")
+            filters_dict[key.strip()] = value.strip()
+            
+        filters = MovieSearchFilters(**filters_dict)
 
+    # Check for similar movie
+    elif "[similar_movies]" in llm_text:
+        action = "similar_movie"
+        match = re.search(r"\[similar_movies\]\s*movie_name\s*=\s*(.+)", llm_text)
+        if match:
+            movie_name = match.group(1).strip()
 
-def prune_conversation_for_llm(conversation: List[Dict[str, str]]) -> List[Dict[str, str]]:
-    if not conversation:
-        return []
-
-    # Find the index of the last "[movie_context]" message
-    context_index = None
-    for i in reversed(range(len(conversation))):
-        msg = conversation[i]
-        if "[movie_context]" in msg["content"]:
-            context_index = i
-            break
-
-    if context_index is None:
-        # No [movie_context] → fallback to last 10 messages
-        return conversation[-10:]
-
-    # From that context message, grab it and the 3 messages before it
-    start_index = max(0, context_index - 3)
-    pruned = conversation[start_index:]
-
-    return pruned
+    # Remove any [filters] or [similar_movies] from final message
+    cleaned_text = re.sub(r"\[filters\].*", "", llm_text, flags=re.DOTALL)
+    cleaned_text = re.sub(r"\[similar_movies\].*", "", cleaned_text, flags=re.DOTALL)
+    cleaned_text = cleaned_text.strip()
 
 
 
-def movies_to_overviews_text(movies: List[MovieCard]) -> str:
-    
-    lines = ["[movie_context]"]
+    return cleaned_text, action, movie_name, filters
 
-    for i, movie in enumerate(movies, start=1):
-        movie_text = (
-            f"{i}. Title: {movie.title}, "
-            f"IMDb Rating: {movie.imdb_rating}, "
-            f"Overview: {movie.overview}"
-        )
-        lines.append(movie_text)
 
-    return "\n".join(lines)
+def ask_llm_for_similar_movies(movie_name: str) -> list[dict]:
+    """
+    Ask OpenAI for a list of 50 similar movies with year.
+    Returns a list of dicts: {"title": str, "year": int}
+    """
+
+    prompt = f"""
+    Return ONLY a comma-separated list of 50 movies similar to "{movie_name}", each with its release year in parentheses.
+    Format: Title (Year), Title (Year), ...
+    Example: Get Out (2017), Us (2019), The Invitation (2015), Coherence (2013)
+    """
+
+    payload = [
+        {"role": "system", "content": "You are a movie expert."},
+        {"role": "user", "content": prompt}
+    ]
+
+    llm_answer = get_openai_completion(payload)
+
+    raw_titles = llm_answer.strip().split(",")
+
+    movie_list = []
+    for entry in raw_titles:
+        try:
+            title, year = entry.strip().rsplit("(", 1)
+            movie_list.append({
+                "title": title.strip(),
+                "year": int(year.replace(")", "").strip())
+            })
+        except Exception:
+            continue  # skip malformed entries
+
+    return movie_list

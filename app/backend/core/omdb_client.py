@@ -3,7 +3,8 @@ from app.backend.core.config import OMDB_API_KEY
 
 OMDB_BASE_URL = "http://www.omdbapi.com/"
 
-def call_omdb_client(imdb_id : str) -> dict:
+
+def call_omdb_client(imdb_id: str) -> dict:
 
     url = OMDB_BASE_URL
     params = {
@@ -17,9 +18,5 @@ def call_omdb_client(imdb_id : str) -> dict:
 
     return {
         "imdb_rating": data.get("imdbRating", None),
-        "imdb_votes_count": data.get("imdbVotes", None)
+        "imdb_votes_count": data.get("imdbVotes", None),
     }
-
-
-
-

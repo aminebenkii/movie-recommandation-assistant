@@ -1,6 +1,21 @@
 # 🧩 API Reference — MoviesYouDidntWatch.com
 
-This file defines all public REST endpoints used by the frontend — including authentication, user profile, movie discovery, chat interaction, and personalized movie lists.
+This file defines all public REST API endpoints used by the frontend, including authentication, user profile, movie discovery, chat interaction, and user-specific movie lists.
+
+---
+
+## 📑 Table of Contents
+
+- 🔐 `POST /auth/signup`
+- 🔐 `POST /auth/login`
+- 👤 `GET /users/me`
+- 🎬 `POST /movies/search`
+- 💬 `POST /chat`
+- ✅ `POST /me/movies/update_status`
+- 📁 `GET /users/me/movies/seen`
+- 📁 `GET /users/me/movies/towatchlater`
+- 📁 `GET /users/me/movies/hidden`
+- 📊 `GET /users/me/stats`
 
 ---
 
@@ -36,7 +51,7 @@ Registers a new user and returns an access token.
 
 ### `POST /auth/login`
 
-Logs in an existing user.
+Logs in an existing user and returns an access token.
 
 **Request Body:**
 ```json
@@ -60,11 +75,11 @@ Logs in an existing user.
 
 ---
 
-## 👤 User
+## 👤 User Profile
 
 ### `GET /users/me`
 
-Returns the currently authenticated user.
+Returns the currently authenticated user's profile.
 
 **Headers:**
 ```
@@ -86,17 +101,23 @@ Authorization: Bearer <JWT>
 
 ### `POST /movies/search`
 
-Returns filtered movie results based on manual filters.
+Returns movies based on manual filters like genre, IMDb rating, release year, etc.
+
+**Headers:**
+```
+Authorization: Bearer <JWT>
+Accept-Language: en
+```
 
 **Request Body:**
 ```json
 {
-  "genre_id": 35,
-  "min_rating": 7.0,
-  "min_votes": 5000,
-  "start_year": 1990,
-  "end_year": 2023,
-  "language": "en",
+  "genre_name": "thriller",
+  "min_imdb_rating": 7.0,
+  "min_imdb_votes_count": 5000,
+  "min_release_year": 1990,
+  "max_release_year": 2023,
+  "original_language": "en",
   "sort_by": "popularity.desc"
 }
 ```
@@ -107,16 +128,18 @@ Returns filtered movie results based on manual filters.
   {
     "tmdb_id": 12345,
     "title": "The Nice Guys",
-    "poster": "...",
-    "rating": 7.4,
-    "vote_count": 95000,
-    "genres": ["Comedy", "Action"],
-    "release_year": 2016
+    "genre_names": ["Comedy", "Drama"],
+    "release_year": 2016,
+    "imdb_rating": 7.4,
+    "imdb_votes_count": 95000,
+    "poster_url": "https://...",
+    "trailer_url": "https://...",
+    "overview": "A private investigator and a tough enforcer team up in 1970s Los Angeles..."
   }
 ]
 ```
 
-> Applies backend filtering and paginates until at least 25 valid movies are found.
+> Returns a list of movies matching the given filters. Backend paginates TMDB results until at least 30 valid movies are found.
 
 ---
 
@@ -124,13 +147,19 @@ Returns filtered movie results based on manual filters.
 
 ### `POST /chat`
 
-Processes a user’s natural language input and returns assistant response and matching movies.
+Processes a user’s natural language query and returns an assistant response, along with optional movie recommendations and extracted filters.
+
+**Headers:**
+```
+Authorization: Bearer <JWT>
+Accept-Language: en
+```
 
 **Request Body:**
 ```json
 {
   "session_id": "uuid-abc123",
-  "query": "Show me underrated sci-fi from the 90s"
+  "query": "Show me underrated sci-fi movies from the 90s"
 }
 ```
 
@@ -140,45 +169,63 @@ Processes a user’s natural language input and returns assistant response and m
   "message": "Here are some lesser-known sci-fi gems from the 1990s 👇",
   "movies": [
     {
-      "id": 603,
-      "title": "The Matrix",
-      "year": 1999,
-      "imdb_rating": 8.7,
-      "vote_count": 1900000,
-      "genres": ["Action", "Sci-Fi"],
-      "poster_url": "...",
-      "tmdb_id": 603
+      "tmdb_id": 12345,
+      "title": "Dark City",
+      "genre_names": ["Science Fiction", "Mystery"],
+      "release_year": 1998,
+      "imdb_rating": 7.6,
+      "imdb_votes_count": 120000,
+      "poster_url": "https://...",
+      "trailer_url": "https://...",
+      "overview": "A man struggles with memories of his past in a dystopian city ruled by shadows."
     }
   ],
   "filters": {
-    "genre": "Science Fiction",
-    "year_range": [1990, 1999],
-    "sort_by": "imdb_rating",
-    "min_votes": 1000
+    "genre_name": "science fiction",
+    "min_imdb_rating": 7.0,
+    "min_imdb_votes_count": 1000,
+    "min_release_year": 1990,
+    "max_release_year": 1999,
+    "original_language": "en",
+    "sort_by": "vote_average.desc"
   }
 }
 ```
 
-> The assistant understands genre, tone, year, rating, and even suggests from currently visible movie list if prompted.
+**Behavior:**
+
+- Saves the query to the user's current chat session.
+- Sends the conversation to the LLM assistant.
+- Parses assistant output for:
+  - `filters` → structured movie filters
+  - `similar_movie` → reference movie name
+- Returns a cleaned assistant message, relevant movie results (if any), and extracted filters.
+
+> The assistant understands tone, genres, date ranges, IMDb filters, and can contextually respond based on your conversation.
 
 ---
 
-## ✅ User Movie Actions
+## ✅ Movie Status Actions
 
-### `POST /user-movies`
+### `POST /me/movies/update_status`
 
-Sets or updates the relationship between the current user and a movie.
+Updates the current user's relationship to a movie.
+
+**Headers:**
+```
+Authorization: Bearer <JWT>
+```
 
 **Request Body:**
 ```json
 {
   "tmdb_id": 12345,
-  "status": "seen"  // or "later", "not_interested", "none"
+  "status": "seen"  // or "towatchlater", "hidden", "none"
 }
 ```
 
 - `"none"` removes the movie from all lists.
-- Replaces any previous status.
+- Replaces any existing status.
 
 **Response:**
 ```json
@@ -187,15 +234,16 @@ Sets or updates the relationship between the current user and a movie.
 
 ---
 
-## 📁 User-Specific Movie Lists
+## 📁 User Movie Lists
 
 ### `GET /users/me/movies/seen`
 
-Returns movies marked as “Seen”.
+Returns all movies marked as **Seen** by the user.
 
 **Headers:**
 ```
 Authorization: Bearer <JWT>
+Accept-Language: en
 ```
 
 **Response:**
@@ -204,31 +252,32 @@ Authorization: Bearer <JWT>
   {
     "tmdb_id": 12345,
     "title": "The Nice Guys",
-    "poster": "...",
-    "rating": 7.4,
-    "vote_count": 95000,
-    "genres": ["Comedy", "Action"],
+    "genre_names": ["Comedy", "Drama"],
     "release_year": 2016,
-    "trailer_url": "https://youtube.com/..."
+    "imdb_rating": 7.4,
+    "imdb_votes_count": 95000,
+    "poster_url": "...",
+    "trailer_url": "...",
+    "overview": "..."
   }
 ]
 ```
 
 ---
 
-### `GET /users/me/movies/later`
+### `GET /users/me/movies/towatchlater`
 
-Returns movies saved for “Watch Later”.
+Returns all movies saved in the **Watch Later** list.
 
-_Same format as `/movies/seen`._
+_Same format as above._
 
 ---
 
-### `GET /users/me/movies/not-interested`
+### `GET /users/me/movies/hidden`
 
-Returns rejected movies marked as “Not Interested”.
+Returns all movies marked as **Not Interested**.
 
-_Same format as `/movies/seen`._
+_Same format as above._
 
 ---
 
@@ -236,7 +285,12 @@ _Same format as `/movies/seen`._
 
 ### `GET /users/me/stats`
 
-Returns aggregated viewing statistics.
+Returns aggregated statistics about the user's viewing activity.
+
+**Headers:**
+```
+Authorization: Bearer <JWT>
+```
 
 **Response:**
 ```json
@@ -250,17 +304,16 @@ Returns aggregated viewing statistics.
 }
 ```
 
-> Note: MVP uses simple SQL. More advanced insights can come later.
+> Stats are calculated using basic SQL aggregation. Advanced insights can be added later.
 
 ---
 
 ## 🧠 Notes
 
-- All authenticated routes require `Authorization: Bearer <JWT>`
-- Movie actions and lists are user-specific
-- Chat and manual filters are synchronized internally
-- All movie data is cached on first fetch, then reused
-- Assistant is context-aware (can reference movies currently on screen)
+- All authenticated routes require the `Authorization: Bearer <JWT>` header.
+- Movie suggestions are always filtered based on the user's existing "Seen", "Watch Later", and "Not Interested" lists.
+- Chat and manual filters are internally unified under the same recommendation logic.
+- TMDB and OMDB data is cached after first fetch for better performance.
+- Chat assistant maintains context during a session and can reference prior interactions.
 
 ---
-

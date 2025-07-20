@@ -24,7 +24,6 @@ def update_status(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-
     success, message = update_user_movie_status(payload.tmdb_id, user.id, db, payload.status)
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
@@ -38,25 +37,22 @@ def fetch_user_seen_movies(
     db: Session = Depends(get_db),
     language: str = Depends(get_language),
 ):
-
     return get_user_movies_by_status(user.id, db, language, "seen")
 
 
-@router.get("/me/movies/later", response_model=list[MovieCard])
+@router.get("/me/movies/towatchlater", response_model=list[MovieCard])
 def fetch_user_later_movies(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     language: str = Depends(get_language),
 ):
+    return get_user_movies_by_status(user.id, db, language, "towatchlater")
 
-    return get_user_movies_by_status(user.id, db, language, "later")
 
-
-@router.get("/me/movies/not-interested", response_model=list[MovieCard])
+@router.get("/me/movies/hidden", response_model=list[MovieCard])
 def fetch_user_not_interested_movies(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     language: str = Depends(get_language),
 ):
-
-    return get_user_movies_by_status(user.id, db, language, "not_interested")
+    return get_user_movies_by_status(user.id, db, language, "hidden")

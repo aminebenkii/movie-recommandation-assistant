@@ -230,7 +230,7 @@ def to_movie_card(movie: CachedMovie, language: str) -> MovieCard:
 
 
 
-def recommend_similar_movies(movie_name: str, user_id: int, db: Session, language: str):
+def recommend_similar_movies(movie_name: str, user_id: int, db: Session, language: str) -> list[MovieCard]:
     """
     Main entrypoint: LLM-driven similar movie recommender
     """

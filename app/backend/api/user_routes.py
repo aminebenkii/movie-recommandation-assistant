@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from app.backend.models.user_model import User
-from app.backend.core.dependancies import get_current_user, get_language
+from app.backend.core.dependencies import get_current_user, get_language
 from app.backend.core.database import get_db
 from app.backend.schemas.user_schemas import UserPublic
 from app.backend.schemas.movie_schemas import MovieCard

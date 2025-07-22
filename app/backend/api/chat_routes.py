@@ -3,7 +3,7 @@ from app.backend.schemas.chat_schemas import ChatQuery, ChatResponse
 from sqlalchemy.orm import Session
 from app.backend.models.user_model import User
 from app.backend.core.database import get_db
-from app.backend.core.dependancies import get_current_user, get_language
+from app.backend.core.dependencies import get_current_user, get_language
 from app.backend.services.chat_service import process_chat_query
 
 router = APIRouter()

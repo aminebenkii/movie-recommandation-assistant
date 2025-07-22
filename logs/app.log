@@ -1,0 +1,232 @@
+2025-07-22 01:18:18,631 [INFO] main - Starting FastAPI App...
+2025-07-22 01:18:18,776 [INFO] app.backend.services.auth_service - Signup attempt for email: amine@example.com
+2025-07-22 01:18:19,168 [INFO] app.backend.services.auth_service - User registered successfully: amine@example.com
+2025-07-22 01:18:19,169 [INFO] app.backend.services.auth_service - Login attempt for: amine@example.com
+2025-07-22 01:18:19,566 [INFO] app.backend.services.auth_service - Login successful for: amine@example.com
+2025-07-22 01:18:19,571 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:18:19,586 [INFO] app.backend.services.auth_service - Signup attempt for email: duplicate@example.com
+2025-07-22 01:18:20,008 [INFO] app.backend.services.auth_service - User registered successfully: duplicate@example.com
+2025-07-22 01:18:20,043 [INFO] app.backend.services.auth_service - Login attempt for: duplicate@example.com
+2025-07-22 01:18:20,445 [INFO] app.backend.services.auth_service - Login successful for: duplicate@example.com
+2025-07-22 01:18:20,449 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:18:20,460 [INFO] app.backend.services.auth_service - Signup attempt for email: duplicate@example.com
+2025-07-22 01:18:20,798 [INFO] app.backend.services.auth_service - User registered successfully: duplicate@example.com
+2025-07-22 01:18:20,799 [INFO] app.backend.services.auth_service - Login attempt for: duplicate@example.com
+2025-07-22 01:18:21,146 [INFO] app.backend.services.auth_service - Login successful for: duplicate@example.com
+2025-07-22 01:18:21,151 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:18:21,809 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:18:21,823 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:18:21,836 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:18:21,846 [INFO] app.backend.services.auth_service - Signup attempt for email: login@example.com
+2025-07-22 01:18:22,075 [INFO] app.backend.services.auth_service - User registered successfully: login@example.com
+2025-07-22 01:18:22,075 [INFO] app.backend.services.auth_service - Login attempt for: login@example.com
+2025-07-22 01:18:22,306 [INFO] app.backend.services.auth_service - Login successful for: login@example.com
+2025-07-22 01:18:22,309 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:18:22,325 [INFO] app.backend.services.auth_service - Login attempt for: login@example.com
+2025-07-22 01:18:22,327 [WARNING] app.backend.services.auth_service - Login failed: no user with email login@example.com
+2025-07-22 01:18:22,331 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 401 Unauthorized"
+2025-07-22 01:18:22,358 [INFO] app.backend.services.auth_service - Signup attempt for email: wrongpwd@example.com
+2025-07-22 01:18:22,604 [INFO] app.backend.services.auth_service - User registered successfully: wrongpwd@example.com
+2025-07-22 01:18:22,604 [INFO] app.backend.services.auth_service - Login attempt for: wrongpwd@example.com
+2025-07-22 01:18:22,827 [INFO] app.backend.services.auth_service - Login successful for: wrongpwd@example.com
+2025-07-22 01:18:22,830 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:18:22,837 [INFO] app.backend.services.auth_service - Login attempt for: wrongpwd@example.com
+2025-07-22 01:18:22,838 [WARNING] app.backend.services.auth_service - Login failed: no user with email wrongpwd@example.com
+2025-07-22 01:18:22,842 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 401 Unauthorized"
+2025-07-22 01:18:22,851 [INFO] app.backend.services.auth_service - Login attempt for: nonexistent@example.com
+2025-07-22 01:18:22,853 [WARNING] app.backend.services.auth_service - Login failed: no user with email nonexistent@example.com
+2025-07-22 01:18:22,855 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 401 Unauthorized"
+2025-07-22 01:18:22,870 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:18:22,885 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:51:49,607 [INFO] main - Starting FastAPI App...
+2025-07-22 01:51:49,863 [INFO] app.backend.services.auth_service - Signup attempt for email: amine@example.com
+2025-07-22 01:51:50,302 [INFO] app.backend.services.auth_service - User registered successfully: amine@example.com
+2025-07-22 01:51:50,304 [INFO] app.backend.services.auth_service - Login attempt for: amine@example.com
+2025-07-22 01:51:50,708 [INFO] app.backend.services.auth_service - Login successful for: amine@example.com
+2025-07-22 01:51:50,713 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:51:50,723 [INFO] app.backend.services.auth_service - Signup attempt for email: duplicate@example.com
+2025-07-22 01:51:51,166 [INFO] app.backend.services.auth_service - User registered successfully: duplicate@example.com
+2025-07-22 01:51:51,167 [INFO] app.backend.services.auth_service - Login attempt for: duplicate@example.com
+2025-07-22 01:51:51,533 [INFO] app.backend.services.auth_service - Login successful for: duplicate@example.com
+2025-07-22 01:51:51,538 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:51:51,544 [INFO] app.backend.services.auth_service - Signup attempt for email: duplicate@example.com
+2025-07-22 01:51:51,581 [WARNING] app.backend.services.auth_service - Signup failed: email already registered - duplicate@example.com
+2025-07-22 01:51:51,586 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 400 Bad Request"
+2025-07-22 01:51:51,605 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:51:51,622 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:51:51,641 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:51:51,659 [INFO] app.backend.services.auth_service - Signup attempt for email: login@example.com
+2025-07-22 01:51:52,038 [INFO] app.backend.services.auth_service - User registered successfully: login@example.com
+2025-07-22 01:51:52,038 [INFO] app.backend.services.auth_service - Login attempt for: login@example.com
+2025-07-22 01:51:52,361 [INFO] app.backend.services.auth_service - Login successful for: login@example.com
+2025-07-22 01:51:52,364 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:51:52,373 [INFO] app.backend.services.auth_service - Login attempt for: login@example.com
+2025-07-22 01:51:52,661 [INFO] app.backend.services.auth_service - Login successful for: login@example.com
+2025-07-22 01:51:52,664 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 200 OK"
+2025-07-22 01:51:52,672 [INFO] app.backend.services.auth_service - Signup attempt for email: wrongpwd@example.com
+2025-07-22 01:51:52,980 [INFO] app.backend.services.auth_service - User registered successfully: wrongpwd@example.com
+2025-07-22 01:51:52,981 [INFO] app.backend.services.auth_service - Login attempt for: wrongpwd@example.com
+2025-07-22 01:51:53,250 [INFO] app.backend.services.auth_service - Login successful for: wrongpwd@example.com
+2025-07-22 01:51:53,253 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:51:53,257 [INFO] app.backend.services.auth_service - Login attempt for: wrongpwd@example.com
+2025-07-22 01:51:53,492 [WARNING] app.backend.services.auth_service - Login failed: wrong password for wrongpwd@example.com
+2025-07-22 01:51:53,494 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 401 Unauthorized"
+2025-07-22 01:51:53,503 [INFO] app.backend.services.auth_service - Login attempt for: nonexistent@example.com
+2025-07-22 01:51:53,506 [WARNING] app.backend.services.auth_service - Login failed: no user with email nonexistent@example.com
+2025-07-22 01:51:53,509 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 401 Unauthorized"
+2025-07-22 01:51:53,520 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:51:53,543 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:54:24,683 [INFO] main - Starting FastAPI App...
+2025-07-22 01:54:24,862 [INFO] app.backend.services.auth_service - Signup attempt for email: amine@example.com
+2025-07-22 01:54:25,159 [INFO] app.backend.services.auth_service - User registered successfully: amine@example.com
+2025-07-22 01:54:25,160 [INFO] app.backend.services.auth_service - Login attempt for: amine@example.com
+2025-07-22 01:54:25,410 [INFO] app.backend.services.auth_service - Login successful for: amine@example.com
+2025-07-22 01:54:25,413 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:54:25,420 [INFO] app.backend.services.auth_service - Signup attempt for email: duplicate@example.com
+2025-07-22 01:54:25,695 [INFO] app.backend.services.auth_service - User registered successfully: duplicate@example.com
+2025-07-22 01:54:25,696 [INFO] app.backend.services.auth_service - Login attempt for: duplicate@example.com
+2025-07-22 01:54:25,934 [INFO] app.backend.services.auth_service - Login successful for: duplicate@example.com
+2025-07-22 01:54:25,938 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:54:25,944 [INFO] app.backend.services.auth_service - Signup attempt for email: duplicate@example.com
+2025-07-22 01:54:25,980 [WARNING] app.backend.services.auth_service - Signup failed: email already registered - duplicate@example.com
+2025-07-22 01:54:25,982 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 400 Bad Request"
+2025-07-22 01:54:25,993 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:54:26,004 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:54:26,014 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:54:26,027 [INFO] app.backend.services.auth_service - Signup attempt for email: login@example.com
+2025-07-22 01:54:26,264 [INFO] app.backend.services.auth_service - User registered successfully: login@example.com
+2025-07-22 01:54:26,265 [INFO] app.backend.services.auth_service - Login attempt for: login@example.com
+2025-07-22 01:54:26,488 [INFO] app.backend.services.auth_service - Login successful for: login@example.com
+2025-07-22 01:54:26,490 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:54:26,498 [INFO] app.backend.services.auth_service - Login attempt for: login@example.com
+2025-07-22 01:54:26,728 [INFO] app.backend.services.auth_service - Login successful for: login@example.com
+2025-07-22 01:54:26,733 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 200 OK"
+2025-07-22 01:54:26,739 [INFO] app.backend.services.auth_service - Signup attempt for email: wrongpwd@example.com
+2025-07-22 01:54:27,023 [INFO] app.backend.services.auth_service - User registered successfully: wrongpwd@example.com
+2025-07-22 01:54:27,024 [INFO] app.backend.services.auth_service - Login attempt for: wrongpwd@example.com
+2025-07-22 01:54:27,458 [INFO] app.backend.services.auth_service - Login successful for: wrongpwd@example.com
+2025-07-22 01:54:27,461 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 01:54:27,466 [INFO] app.backend.services.auth_service - Login attempt for: wrongpwd@example.com
+2025-07-22 01:54:27,781 [WARNING] app.backend.services.auth_service - Login failed: wrong password for wrongpwd@example.com
+2025-07-22 01:54:27,783 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 401 Unauthorized"
+2025-07-22 01:54:27,792 [INFO] app.backend.services.auth_service - Login attempt for: nonexistent@example.com
+2025-07-22 01:54:27,795 [WARNING] app.backend.services.auth_service - Login failed: no user with email nonexistent@example.com
+2025-07-22 01:54:27,798 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 401 Unauthorized"
+2025-07-22 01:54:27,810 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 01:54:27,822 [INFO] httpx - HTTP Request: POST http://testserver/auth/login "HTTP/1.1 422 Unprocessable Entity"
+2025-07-22 02:05:29,500 [INFO] main - Starting FastAPI App...
+2025-07-22 02:05:29,726 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:05:30,117 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:05:30,118 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:05:30,539 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:05:30,544 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:05:30,553 [INFO] httpx - HTTP Request: POST http://testserver/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:05:31,445 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:05:31,450 [WARNING] app.backend.services.auth_service - Signup failed: email already registered - lover@example.com
+2025-07-22 02:05:31,455 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 400 Bad Request"
+2025-07-22 02:05:31,529 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:05:31,532 [WARNING] app.backend.services.auth_service - Signup failed: email already registered - lover@example.com
+2025-07-22 02:05:31,536 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 400 Bad Request"
+2025-07-22 02:05:31,588 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:05:31,591 [WARNING] app.backend.services.auth_service - Signup failed: email already registered - lover@example.com
+2025-07-22 02:05:31,595 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 400 Bad Request"
+2025-07-22 02:09:42,414 [INFO] main - Starting FastAPI App...
+2025-07-22 02:09:42,634 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:09:43,082 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:09:43,083 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:09:43,470 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:09:43,475 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:09:43,483 [INFO] httpx - HTTP Request: POST http://testserver/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:09:44,465 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:09:44,893 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:09:44,894 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:09:45,209 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:09:45,213 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:09:45,219 [INFO] httpx - HTTP Request: POST http://testserver/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:09:45,494 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:09:45,803 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:09:45,803 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:09:46,144 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:09:46,149 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:09:46,155 [INFO] httpx - HTTP Request: POST http://testserver/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:09:46,361 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:09:46,633 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:09:46,633 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:09:46,858 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:09:46,862 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:09:46,867 [INFO] httpx - HTTP Request: POST http://testserver/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:11:21,969 [INFO] main - Starting FastAPI App...
+2025-07-22 02:11:22,169 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:11:22,591 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:11:22,592 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:11:22,982 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:11:22,986 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:11:22,992 [INFO] httpx - HTTP Request: POST http://testserver/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:11:23,889 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:11:24,304 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:11:24,305 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:11:24,698 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:11:24,702 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:11:24,709 [INFO] httpx - HTTP Request: POST http://testserver/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:11:24,988 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:11:25,420 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:11:25,420 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:11:25,793 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:11:25,809 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:11:25,817 [INFO] httpx - HTTP Request: POST http://testserver/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:11:26,106 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:11:26,548 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:11:26,549 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:11:26,924 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:11:26,928 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:11:26,936 [INFO] httpx - HTTP Request: POST http://testserver/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:18:41,718 [INFO] main - Starting FastAPI App...
+2025-07-22 02:18:41,944 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:18:42,373 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:18:42,374 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:18:42,788 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:18:42,793 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:18:42,801 [INFO] httpx - HTTP Request: POST http://testserver/users/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:18:43,879 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:18:44,296 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:18:44,297 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:18:44,646 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:18:44,650 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:18:44,656 [INFO] httpx - HTTP Request: POST http://testserver/users/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:18:44,910 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:18:45,233 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:18:45,233 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:18:45,498 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:18:45,501 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:18:45,505 [INFO] httpx - HTTP Request: POST http://testserver/users/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:18:45,767 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:18:46,013 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:18:46,014 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:18:46,245 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:18:46,249 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:18:46,255 [INFO] httpx - HTTP Request: POST http://testserver/users/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:22:42,501 [INFO] main - Starting FastAPI App...
+2025-07-22 02:22:42,725 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:22:43,164 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:22:43,165 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:22:43,560 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:22:43,564 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:22:43,570 [INFO] httpx - HTTP Request: POST http://testserver/users/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:22:44,530 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:22:44,972 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:22:44,973 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:22:45,361 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:22:45,365 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:22:45,372 [INFO] httpx - HTTP Request: POST http://testserver/users/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:22:45,646 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:22:45,985 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:22:45,986 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:22:46,273 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:22:46,276 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:22:46,282 [INFO] httpx - HTTP Request: POST http://testserver/users/me/movies/update_status "HTTP/1.1 404 Not Found"
+2025-07-22 02:22:46,534 [INFO] app.backend.services.auth_service - Signup attempt for email: lover@example.com
+2025-07-22 02:22:46,824 [INFO] app.backend.services.auth_service - User registered successfully: lover@example.com
+2025-07-22 02:22:46,824 [INFO] app.backend.services.auth_service - Login attempt for: lover@example.com
+2025-07-22 02:22:47,050 [INFO] app.backend.services.auth_service - Login successful for: lover@example.com
+2025-07-22 02:22:47,055 [INFO] httpx - HTTP Request: POST http://testserver/auth/signup "HTTP/1.1 201 Created"
+2025-07-22 02:22:47,061 [INFO] httpx - HTTP Request: POST http://testserver/users/me/movies/update_status "HTTP/1.1 404 Not Found"

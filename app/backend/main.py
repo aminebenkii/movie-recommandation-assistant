@@ -24,7 +24,7 @@ async def lifespan(app:FastAPI):
 # --- FastAPI App Setup ---
 app = FastAPI(
     title="Movies You Didn't Watch",
-    description="A Conversational movie recommender chatbot",
+    description="A Conversational movie and TV Shows recommender chatbot",
     version="1.0.0",
     docs_url="/docs",
     redoc_url=None,

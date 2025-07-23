@@ -38,3 +38,7 @@ class MovieSearchFilters(BaseModel):
 class MovieStatusUpdate(BaseModel):
     tmdb_id: int
     status: Literal["seen", "towatchlater", "hidden", "none"]
+
+
+class KeywordSearchRequest(BaseModel):
+    keywords: str

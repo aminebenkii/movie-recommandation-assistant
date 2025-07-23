@@ -11,22 +11,30 @@ logger = logging.getLogger(__name__)
 
 
 def handle_signup_request(user_data: UserCreate, database: Session) -> TokenResponse:
-
-    success, message = signup_user(user_data, database)
+    """
+    Process a user signup request: create user, then log them in and return JWT & User Data.
+    """
+    success, message = add_user_to_db(user_data, database)
 
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
-    
-    user_credentials = UserLogin(email=user_data.email, password=user_data.password)
-    token, user = login_user(user_credentials, database)
+    else:
+        logger.info("Signup successful for: %s", user_data.email)
 
-    if not token:
+
+    user_credentials = UserLogin(email=user_data.email, password=user_data.password)
+    user = check_user_credentials_in_db(user_credentials, database)
+
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Credentials"
         )
-    
+    else:
+        logger.info("Login successful for: %s", user.email)
+
+
     return TokenResponse(
-        access_token=token,
+        access_token=create_access_token({"sub": user.email}),
         token_type="Bearer",
         user=UserPublic(
             first_name=user.first_name, last_name=user.last_name, email=user.email
@@ -36,24 +44,30 @@ def handle_signup_request(user_data: UserCreate, database: Session) -> TokenResp
 
 
 def handle_login_request(user_credentials: UserLogin, database: Session) -> TokenResponse:
-
-    token, user = login_user(user_credentials, database)
-
-    if not token:
+    """
+    Process a user login request: log user in, and return JWT & User Data.
+    """
+    user = check_user_credentials_in_db(user_credentials, database)
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Credentials"
         )
-    
+    else:
+        logger.info("Login successful for: %s", user.email)
+
     return TokenResponse(
-        access_token=token,
+        access_token=create_access_token({"sub": user.email}),
         token_type="Bearer",
         user=UserPublic(
             first_name=user.first_name, last_name=user.last_name, email=user.email
-        ),
+        )
     )
 
 
-def signup_user(user_data: UserCreate, database: Session) -> Tuple[bool, str]:
+def add_user_to_db(user_data: UserCreate, database: Session) -> Tuple[bool, str]:
+    """
+    Process a user signup request: create user, then log them in and return JWT & User Data.
+    """
     logger.info("Signup attempt for email: %s", user_data.email)
 
     email_exists = database.query(User).filter(User.email == user_data.email).first()
@@ -70,13 +84,12 @@ def signup_user(user_data: UserCreate, database: Session) -> Tuple[bool, str]:
 
     database.add(new_user)
     database.commit()
-    logger.info("User registered successfully: %s", user_data.email)
     return True, "User registered successfully"
 
 
 
 
-def login_user(user_data: UserLogin, database: Session) -> Tuple[Optional[str], User]:
+def check_user_credentials_in_db(user_data: UserLogin, database: Session) -> Optional[User]:
     logger.info("Login attempt for: %s", user_data.email)
 
     user = database.query(User).filter(User.email == user_data.email).first()
@@ -94,6 +107,4 @@ def login_user(user_data: UserLogin, database: Session) -> Tuple[Optional[str], 
             detail="Invalid credentials"
         )
 
-    token = create_access_token({"sub": user.email})
-    logger.info("Login successful for: %s", user.email)
-    return token, user
+    return user

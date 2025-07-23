@@ -18,7 +18,7 @@ def read_own_profile(user: User = Depends(get_current_user)):
     )
 
 
-@router.post("me/movies/update_status", status_code=status.HTTP_200_OK)
+@router.post("/me/movies/update_status", status_code=status.HTTP_200_OK)
 def update_status(
     payload: MovieStatusUpdate,
     db: Session = Depends(get_db),
@@ -28,7 +28,7 @@ def update_status(
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
 
-    return {"message": "movie status updated"}
+    return {"success": True}
 
 
 @router.get("/me/movies/seen", response_model=list[MovieCard])

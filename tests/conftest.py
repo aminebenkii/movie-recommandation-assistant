@@ -5,6 +5,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.backend.core.database import Base
 from app.backend.main import app
+
+
+
 from app.backend.core.dependencies import get_db
 import gc 
 
@@ -47,6 +50,16 @@ def setup_test_db():
     if os.path.exists(TEST_DB_PATH):
         os.remove(TEST_DB_PATH)
 
+
+# Direct DB session for testing services (bypasses FastAPI)
+@pytest.fixture()
+def test_db_session():
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+        
 
 # Step 4: Create FastAPI test client
 @pytest.fixture()

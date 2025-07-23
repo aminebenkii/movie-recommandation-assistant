@@ -11,62 +11,46 @@ from app.backend.core.tmdb_client import (
     call_tmdb_movie_videos_endpoint,
     call_tmdb_movie_id_by_movie_name_endpoint,
 )
-
-from app.backend.services.llm_service import ask_llm_for_similar_movies
+from app.backend.services.llm_service import ask_llm_for_similar_movies, ask_llm_for_matching_keywords_movies
 from app.backend.core.omdb_client import call_omdb_client
 from functools import partial
 from concurrent.futures import ThreadPoolExecutor
 
 
 
+def fetch_excluded_ids(user_id: int, db: Session) -> set[int]:
 
-def recommend_movies(filters: MovieSearchFilters, user_id: int, database: Session, language: str) -> list[MovieCard]:
-    """
-    Recommends a list of high-quality movies that the user hasn't seen,
-    based on filters + User history. Pulls from TMDB, enriches with OMDB,
-    caches to DB if needed, and returns fully enriched MovieCards.
-    """
+    excluded_ids = {
+        row.tmdb_id
+        for row in db.query(UserMovie).filter(
+            UserMovie.user_id == user_id,
+            UserMovie.status.in_(["seen", "towatchlater", "hidden"]),
+        )
+    }
 
-    filters.genre_id = map_genre_to_id(filters.genre_name)
-
-    tmdb_ids = fetch_unseen_tmdb_ids(filters, user_id, database)
-
-    get_and_cache_movies_data_to_db(tmdb_ids)
-
-    cache_movies = fetch_movies_from_cache(tmdb_ids, database)
-
-    reranked = rerank_and_imdb_filter_movies(cache_movies, filters)
-
-    movie_cards = [to_movie_card(m, language) for m in reranked]
-
-    return movie_cards
+    return excluded_ids
 
 
-def fetch_unseen_tmdb_ids(filters: MovieSearchFilters, user_id: int, db: Session) -> list[int]:
+def fetch_unseen_tmdb_ids(filters: MovieSearchFilters, user_id: int, database: Session) -> list[int]:
     """
     Fetch up to 30 TMDB movies that:
     - Match the genre filter (genre in position 1 or 2)
     - Have not been marked by the user (seen, later, not_interested)
     """
 
-    excluded_ids = {
-        row.tmdb_id
-        for row in db.query(UserMovie).filter(
-            UserMovie.user_id == user_id,
-            UserMovie.status.in_(["seen", "later", "hidden"]),
-        )
-    }
-
+    max_results = 60
+    max_pages = 20
+    excluded_ids = fetch_excluded_ids(user_id, database)
     results = []
     page = 1
 
-    while len(results) < 60 and page <= 40:
+    while len(results) < max_results and page <= max_pages:
         candidates = call_tmdb_discover_movies_endpoint(filters, page)
         for movie in candidates:
             if filters.genre_id is None or filters.genre_id in movie["genre_ids"][:2]:
                 if movie["id"] not in excluded_ids:
                     results.append(movie["id"])
-                    if len(results) == 60:
+                    if len(results) == max_results:
                         break
 
         page += 1
@@ -148,7 +132,7 @@ def get_and_cache_one_movie_data_to_db(tmdb_id):
         db.close()
 
 
-def get_and_cache_movies_data_to_db(movies: list[dict]) -> list[int]:
+def get_and_cache_movies_data_to_db(movies: list[dict]) -> None:
     """
     Enrich and cache a list of movies in parallel (IMDb, trailer, genres).
     Each thread manages its own DB session.
@@ -226,42 +210,81 @@ def to_movie_card(movie: CachedMovie, language: str) -> MovieCard:
 
 
 
+def recommend_movies_by_filters(filters: MovieSearchFilters, user_id: int, database: Session, language: str) -> list[MovieCard]:
+    """
+    Recommends a list of high-quality movies that the user hasn't seen,
+    based on filters + User history. Pulls from TMDB, enriches with OMDB,
+    caches to DB if needed, and returns fully enriched MovieCards.
+    """
+
+    filters.genre_id = map_genre_to_id(filters.genre_name)
+
+    tmdb_ids = fetch_unseen_tmdb_ids(filters, user_id, database)
+
+    get_and_cache_movies_data_to_db(tmdb_ids)
+
+    cache_movies = fetch_movies_from_cache(tmdb_ids, database)
+
+    reranked = rerank_and_imdb_filter_movies(cache_movies, filters)
+
+    movie_cards = [to_movie_card(m, language) for m in reranked]
+
+    return movie_cards
 
 
-
-
-def recommend_similar_movies(movie_name: str, user_id: int, db: Session, language: str) -> list[MovieCard]:
+def recommend_similar_movies(movie_name: str, user_id: int, database: Session, language: str) -> list[MovieCard]:
     """
     Main entrypoint: LLM-driven similar movie recommender
     """
 
-    # 1. Ask LLM for 50 semantically similar movie titles
     similar_movies = ask_llm_for_similar_movies(movie_name)
-
     if not similar_movies:
         print(f"[LLM WARNING] No movies returned for: {movie_name}")
         return []
 
-    # 2. Lookup TMDB IDs from titles and years
-    tmdb_ids = []
-    for movie in similar_movies:
-        tmdb_id = call_tmdb_movie_id_by_movie_name_endpoint(movie["title"], movie["year"])
-        if tmdb_id:
-            tmdb_ids.append(tmdb_id)
+    # Parallel TMDB ID Lookup (preserving order)
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = [
+            executor.submit(call_tmdb_movie_id_by_movie_name_endpoint, movie["title"], movie["year"])
+            for movie in similar_movies
+        ]
+        tmdb_ids = [ result for result in (f.result() for f in futures) if result is not None]
 
-    # 3. Filter out movies the user has already seen / saved
-    excluded_ids = {
-        row.tmdb_id
-        for row in db.query(UserMovie).filter(
-            UserMovie.user_id == user_id,
-            UserMovie.status.in_(["seen", "later", "hidden"]),
-        )
-    }
+
+    excluded_ids = fetch_excluded_ids(user_id, database)
     filtered_ids = [mid for mid in tmdb_ids if mid not in excluded_ids]
 
-    # 4. Cache and enrich movie metadata
-    get_and_cache_movies_data_to_db(filtered_ids)
 
-    # 5. Fetch from cache and return movie cards
-    cached_movies = fetch_movies_from_cache(filtered_ids, db)
+    get_and_cache_movies_data_to_db(filtered_ids)
+    cached_movies = fetch_movies_from_cache(filtered_ids, database)
     return [to_movie_card(m, language) for m in cached_movies]
+
+
+def search_movies_by_keywords(keywords: str, user_id: int, database: Session, language: str) -> list[MovieCard]:
+    """
+    Main entrypoint: LLM-driven similar movie recommender
+    """
+
+    matching_movies = ask_llm_for_matching_keywords_movies(keywords)
+    if not matching_movies:
+        print(f"[LLM WARNING] No movies returned for: {keywords}")
+        return []
+
+    # Parallel TMDB ID Lookup (preserving order)
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = [
+            executor.submit(call_tmdb_movie_id_by_movie_name_endpoint, movie["title"], movie["year"])
+            for movie in matching_movies
+        ]
+
+        tmdb_ids = [ result for result in (f.result() for f in futures) if result is not None]
+
+
+    excluded_ids = fetch_excluded_ids(user_id, database)
+    filtered_ids = [mid for mid in tmdb_ids if mid not in excluded_ids]
+
+    get_and_cache_movies_data_to_db(filtered_ids)
+    cached_movies = fetch_movies_from_cache(filtered_ids, database)
+    return [to_movie_card(m, language) for m in cached_movies]
+
+

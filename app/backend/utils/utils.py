@@ -20,13 +20,17 @@ def read_json(path):
 GENRE_MAPPING = read_json(MAPPING_FILE_PATH)
 
 
-def map_genre_to_id(genre: str) -> int:
-    if not genre:
+def map_genre_to_id(genre: str) -> int | None:
+
+    if not isinstance(genre, str) or not genre.strip():
         return None
-    mapping = GENRE_MAPPING.get("genre_to_id")
+
+    mapping = GENRE_MAPPING.get("genre_to_id", {})
+
     genre_id = mapping.get(genre.lower().strip())
     if genre_id is None:
-        raise ValueError(f"Genre {genre} not found in mapping")
+        raise ValueError(f"Genre '{genre}' not found in mapping")
+
     return genre_id
 
 

@@ -1,0 +1,167 @@
+2025-07-24 01:10:31,884 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 01:10:32,629 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 01:41:57,333 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 01:41:57,634 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 01:42:10,596 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 01:42:10,830 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 01:42:22,700 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 01:42:22,937 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 01:46:20,895 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 01:46:21,122 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 01:51:29,918 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 01:51:30,152 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 01:52:05,315 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 01:52:05,556 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 01:54:47,883 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 01:54:48,121 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 01:57:42,869 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 01:57:51,850 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 02:00:35,378 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 02:00:35,608 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 02:36:34,067 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 02:36:34,316 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 02:47:09,173 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 02:47:09,396 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 02:53:16,129 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 02:53:16,358 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 03:01:34,591 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 03:01:34,818 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 03:12:33,106 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 03:12:33,338 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 03:13:07,549 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 03:13:07,786 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 03:14:09,658 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 03:14:09,883 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 03:20:25,142 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 03:20:25,367 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 03:29:32,226 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 03:29:32,449 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 03:40:35,953 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 03:40:36,192 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 04:32:06,293 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 04:32:06,681 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 12:50:47,737 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 12:50:47,966 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 12:51:36,194 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 12:51:36,419 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 13:38:08,644 [ERROR] asyncio - Exception in callback _ProactorBasePipeTransport._call_connection_lost(None)
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "C:\Users\amine\AppData\Local\Programs\Python\Python311\Lib\asyncio\events.py", line 84, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\amine\AppData\Local\Programs\Python\Python311\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+2025-07-24 13:42:20,445 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 13:42:20,684 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 14:53:52,381 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 14:53:52,615 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 19:27:45,548 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 19:27:45,803 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 19:27:53,715 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 19:27:53,939 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 19:29:06,669 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 19:29:06,894 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 19:31:31,304 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 19:31:31,528 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 19:38:38,242 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 19:38:38,463 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 20:48:42,122 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 20:48:42,354 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 21:49:37,993 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 21:49:38,222 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 21:59:48,086 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 21:59:48,308 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 22:30:46,753 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:30:53,566 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:35:33,709 [INFO] main - Starting FastAPI App...
+2025-07-24 22:36:03,271 [INFO] main - Starting FastAPI App...
+2025-07-24 22:36:04,004 [INFO] main - Shutdown: cleaning up resources...
+2025-07-24 22:36:13,242 [INFO] main - Starting FastAPI App...
+2025-07-24 22:36:13,266 [INFO] main - Startup: initializing resources...
+2025-07-24 22:36:16,971 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:36:24,765 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:39:06,445 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:39:30,319 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:39:43,829 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:39:49,869 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:41:15,889 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:41:16,382 [INFO] main - Starting FastAPI App...
+2025-07-24 22:41:31,658 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:45:01,495 [INFO] main - Starting FastAPI App...
+2025-07-24 22:45:14,488 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:46:23,508 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:51:30,456 [INFO] main - Starting FastAPI App...
+2025-07-24 22:51:44,704 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:51:57,520 [INFO] main - Shutdown: cleaning up resources...
+2025-07-24 22:53:21,189 [INFO] main - Starting FastAPI App...
+2025-07-24 22:53:25,302 [INFO] main - Starting FastAPI App...
+2025-07-24 22:53:25,331 [INFO] main - Startup: initializing resources...
+2025-07-24 22:53:44,250 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:54:43,678 [INFO] main - Starting FastAPI App...
+2025-07-24 22:55:29,327 [INFO] main - Starting FastAPI App...
+2025-07-24 22:55:48,887 [INFO] main - Starting FastAPI App...
+2025-07-24 22:57:01,474 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 22:57:02,200 [INFO] main - Starting FastAPI App...
+2025-07-24 22:57:41,176 [INFO] main - Starting FastAPI App...
+2025-07-24 22:58:38,434 [INFO] main - Shutdown: cleaning up resources...
+2025-07-24 22:59:01,228 [INFO] main - Starting FastAPI App...
+2025-07-24 22:59:01,245 [INFO] main - Startup: initializing resources...
+2025-07-24 22:59:16,438 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:02:32,699 [INFO] app.backend.services.auth_service - Login attempt for: amine@test.com
+2025-07-24 23:02:33,123 [INFO] app.backend.services.auth_service - Login successful for: amine@test.com
+2025-07-24 23:02:53,840 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:03:10,062 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:03:20,979 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:03:45,371 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:04:02,046 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:04:15,045 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:04:53,152 [INFO] main - Starting FastAPI App...
+2025-07-24 23:05:41,750 [INFO] main - Starting FastAPI App...
+2025-07-24 23:07:07,400 [INFO] main - Starting FastAPI App...
+2025-07-24 23:07:27,144 [INFO] main - Starting FastAPI App...
+2025-07-24 23:07:33,709 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:07:59,204 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:08:00,959 [INFO] main - Starting FastAPI App...
+2025-07-24 23:08:14,299 [INFO] main - Starting FastAPI App...
+2025-07-24 23:08:17,239 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:08:35,866 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:08:43,856 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:08:58,944 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:09:18,259 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:09:27,169 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:09:44,683 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:09:57,789 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:10:24,304 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:10:45,735 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:11:17,048 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:11:42,624 [INFO] main - Shutdown: cleaning up resources...
+2025-07-24 23:12:27,485 [INFO] main - Starting FastAPI App...
+2025-07-24 23:13:35,469 [INFO] main - Starting FastAPI App...
+2025-07-24 23:14:01,620 [INFO] main - Starting FastAPI App...
+2025-07-24 23:14:21,513 [INFO] main - Starting FastAPI App...
+2025-07-24 23:14:24,143 [INFO] main - Starting FastAPI App...
+2025-07-24 23:14:24,155 [INFO] main - Startup: initializing resources...
+2025-07-24 23:14:41,651 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:14:44,925 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:15:49,026 [INFO] main - Starting FastAPI App...
+2025-07-24 23:15:49,437 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:15:50,691 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:16:59,881 [INFO] main - Starting FastAPI App...
+2025-07-24 23:17:31,395 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:17:32,642 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:17:32,945 [INFO] main - Starting FastAPI App...
+2025-07-24 23:17:52,631 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:17:54,014 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:18:04,279 [INFO] main - Shutdown: cleaning up resources...
+2025-07-24 23:18:40,469 [INFO] main - Starting FastAPI App...
+2025-07-24 23:18:40,511 [INFO] main - Startup: initializing resources...
+2025-07-24 23:19:00,728 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:19:05,947 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:19:22,574 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:22:51,028 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:23:08,136 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:24:00,645 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:24:18,788 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:25:16,652 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-24 23:25:22,171 [INFO] httpx - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

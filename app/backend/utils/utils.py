@@ -20,23 +20,27 @@ def read_json(path):
 GENRE_MAPPING = read_json(MAPPING_FILE_PATH)
 
 
-def map_genre_to_id(genre: str) -> int | None:
+def map_genre_to_id(media_type: str, language: str, genre: str) -> int | None:
 
     if not isinstance(genre, str) or not genre.strip():
         return None
 
-    mapping = GENRE_MAPPING.get("genre_to_id", {})
+    mapping = GENRE_MAPPING.get(media_type).get(language).get("genre_to_id", {})
 
     genre_id = mapping.get(genre.lower().strip())
+
     if genre_id is None:
         raise ValueError(f"Genre '{genre}' not found in mapping")
 
     return genre_id
 
 
-def map_id_to_genre(id: int, language: str) -> str:
-    mapping = GENRE_MAPPING.get("id_to_genre").get(language)
+def map_id_to_genre(media_type: str, language: str, id: int) -> str:
+
+    mapping = GENRE_MAPPING.get(media_type).get(language).get("id_to_genre", {})
+
     genre_name = mapping.get(str(id))
+    
     if genre_name is None:
         raise ValueError(f"Genre with id : {id}, was not found in mapping.")
     return genre_name.lower()

@@ -11,14 +11,23 @@ This document defines all **Pydantic schemas** used across the backend API for v
   - [`UserLogin`](#userlogin)
   - [`UserPublic`](#userpublic)
   - [`TokenResponse`](#tokenresponse)
+
 - [🎬 Movie Schemas](#-movie-schemas)
   - [`MovieCard`](#moviecard)
   - [`MovieSearchFilters`](#moviesearchfilters)
 - [✅ UserMovie Schemas](#-usermovie-schemas)
   - [`MovieStatusUpdate`](#moviestatusupdate)
+
+- [🎬 TV Show Schemas](#-tvshow-schemas)
+  - [`TvShowCard`](#moviecard)
+  - [`TvShowSearchFilters`](#tvshowsearchfilters)
+- [✅ UserTvShow Schemas](#-usertvshow-schemas)
+  - [`TvShowStatusUpdate`](#tvshowstatusupdate)
+
 - [💬 Chat Schemas](#-chat-schemas)
   - [`ChatQuery`](#chatquery)
   - [`ChatResponse`](#chatresponse)
+
 - [📊 Stats Schema](#-stats-schema)
   - [`UserStats`](#userstats)
 
@@ -60,8 +69,6 @@ class UserPublic(BaseModel):
     email: EmailStr
 ```
 
----
-
 ### `TokenResponse`
 Returned after successful signup or login.
 
@@ -72,7 +79,19 @@ class TokenResponse(BaseModel):
     user: UserPublic
 ```
 
+### `MediaStatusUpdate`
+Used to set or update a movie status (seen, to-watch-later, hidden, or reset).
+
+
+```python
+class MediaStatusUpdate(BaseModel):
+    tmdb_id: int
+    status: Literal["seen", "towatchlater", "hidden", "none"]
+```
+
 ---
+
+
 
 ## 🎬 Movie Schemas
 
@@ -82,6 +101,7 @@ Standard movie representation used across the API (e.g. search results, lists).
 ```python
 class MovieCard(BaseModel):
     tmdb_id: Optional[int]
+    imdb_id: Optional[str]
     title: Optional[str]
     genre_names: Optional[list[str]]
     release_year: Optional[int] = None
@@ -119,17 +139,50 @@ class MovieSearchFilters(BaseModel):
     ]] = "popularity.desc"
 ```
 
+
 ---
 
-## ✅ UserMovie Schemas
+## 🎬 Tv Show Schemas
 
-### `MovieStatusUpdate`
-Used to set or update a movie status (seen, to-watch-later, hidden, or reset).
+### `TvShowCard`
+Standard movie representation used across the API (e.g. search results, lists).
 
 ```python
-class MovieStatusUpdate(BaseModel):
-    tmdb_id: int
-    status: Literal["seen", "towatchlater", "hidden", "none"]
+class TvShowCard(BaseModel):
+    tmdb_id: Optional[int]
+    imdb_id: Optional[str]
+    title: Optional[str]
+    genre_names: Optional[list[str]]
+    release_year: Optional[int] = None
+    imdb_rating: Optional[float]
+    imdb_votes_count: Optional[int]
+    poster_url: Optional[str] = None
+    trailer_url: Optional[str] = None
+    overview: Optional[str] = None
+```
+
+---
+
+### `TvShowSearchFilters`
+Used to filter movie searches via manual filters or parsed chat intent.
+
+```python
+class TvShowSearchFilters(BaseModel):
+    genre_name: Optional[Literal[
+        "action & adventure", "animation", "comedy", "crime", "documentary",
+        "drama", "family", "kids", "mystery", "news", "reality",
+        "sci-fi & fantasy", "soap", "talk", "war & politics", "western"
+    ]] = None
+
+    genre_id: Optional[int] = None
+    min_imdb_rating: Optional[float] = None
+    min_imdb_votes_count: Optional[int] = None
+    min_release_year: Optional[int] = None
+    max_release_year: Optional[int] = None
+    original_language: Optional[str] = None
+    sort_by: Optional[Literal[
+        "popularity.desc", "vote_average.desc", "vote_count.desc"
+    ]] = "popularity.desc"
 ```
 
 ---
@@ -143,6 +196,7 @@ Schema for chat requests submitted by the user.
 class ChatQuery(BaseModel):
     session_id: str
     query: str
+    media_type: Optional[str]
 ```
 
 ---
@@ -153,8 +207,9 @@ Returned after processing a user message via the AI assistant.
 ```python
 class ChatResponse(BaseModel):
     message: str
-    movies: Optional[list[MovieCard]]
-    filters: Optional[MovieSearchFilters]
+    media_type: Optional[Literal["movie", "tv"]]
+    results: Optional[list[MovieCard | TvShowCard]]
+    filters: Optional[MovieSearchFilters | TvShowSearchFilters]
 ```
 
 ---

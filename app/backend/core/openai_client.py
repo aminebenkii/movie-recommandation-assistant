@@ -1,5 +1,5 @@
 from openai import OpenAI
-from app.backend.core.config import OPENAI_API_KEY, SYSTEM_PROMPT, OPENAI_MODEL
+from app.backend.core.config import OPENAI_API_KEY, OPENAI_MODEL
 from typing import List, Dict
 
 # ─────────────────────────────────────────────
@@ -7,17 +7,16 @@ from typing import List, Dict
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 
-def build_openai_payload(conversation: List[Dict[str, str]]) -> List[Dict[str, str]]:
-    messages = []
-    messages.append({"role": "system", "content": SYSTEM_PROMPT})
+def get_openai_completion(conversation: List[Dict[str, str]], prompt: str, temperature: float) -> str:
+
+    messages = [{"role": "system", "content": prompt}]
     messages.extend(conversation)
-    return messages
 
-
-def get_openai_completion(messages: List[Dict[str, str]]) -> str:
     try:
         response = openai_client.chat.completions.create(
-            model=OPENAI_MODEL, messages=messages, temperature=0.3
+            model=OPENAI_MODEL, 
+            messages=messages, 
+            temperature=temperature
         )
         return response.choices[0].message.content.strip()
 

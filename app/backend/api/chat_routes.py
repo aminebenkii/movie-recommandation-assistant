@@ -1,3 +1,5 @@
+# app/backend/api/chat_routes.py
+
 from fastapi import APIRouter, Depends
 from app.backend.schemas.chat_schemas import ChatQuery, ChatResponse
 from sqlalchemy.orm import Session

@@ -44,12 +44,44 @@ app/backend/
 
 Defines all public HTTP endpoints exposed to the frontend:
 
-- `POST /auth/signup` / `login`
-- `GET /users/me` + stats
-- `POST /movies/search` (manual filtering)
-- `POST /chat` (natural language interaction)
-- `POST /me/movies/update_status` (seen/later/hidden)
-- `GET /users/me/movies/*` (movie lists)
+
+🔐 Authentication
+- `POST /auth/signup`
+- `POST /auth/login`
+
+👤 User Profile
+- `GET /users/me`
+
+🎬 Movie Discovery
+- `POST /movies/search-by-filters`
+- `POST /movies/search-by-keywords`
+
+📺 TV Show Discovery
+- `POST /tvshows/search-by-filters`
+- `POST /tvshows/search-by-keywords`
+
+💬 Chat Assistant
+- `POST /chat`
+
+ ✅ Movie Status Actions
+- `POST /me/movies/update_status`
+
+ ✅ TV Show Status Actions
+- `POST /me/tvshows/update_status`
+
+ 📁 User Movie Lists
+- `GET /me/movies/seen`
+- `GET /me/movies/towatchlater`
+- `GET /me/movies/hidden`
+
+ 📁 User TV Show Lists
+- `GET /me/tvshows/seen`
+- `GET /me/tvshows/towatchlater`
+- `GET /me/tvshows/hidden`
+
+ 📊 User Stats
+- `GET /users/me/stats`
+
 
 Routes are thin and delegate logic to corresponding services.
 
@@ -61,10 +93,11 @@ Handles domain logic, data flow, and integration orchestration.
 
 - `auth_service.py`: User registration, login, token issuance
 - `movie_service.py`: Main pipeline for movie recommendations
+- `tvshow_service.py`: Main pipeline for movie recommendations
 - `llm_service.py`: Interacts with OpenAI to extract filters or suggest similar movies
 - `session_service.py`: Manages assistant conversation context
-- `user_movie_service.py`: Handles per-user movie actions
-- `parser_service.py`: Extracts filters/intent from LLM replies
+- `user_media_service.py`: Handles per-user movie or tvshow actions
+
 
 Multithreaded enrichment and per-user filtering are handled here.
 
@@ -76,7 +109,8 @@ Defined using SQLAlchemy:
 
 - `User`: Authentication and identity
 - `CachedMovie`: Movie records enriched with TMDB + OMDB metadata
-- `UserMovie`: Status of each movie for a user (seen/later/hidden)
+- `CachedTvShow`: TV Show records enriched with TMDB + OMDB metadata
+- `UserMedia`: Status of each movie/tvshow for a user (seen/later/hidden)
 - `ChatSession`: LLM interaction history, stored as JSON
 
 Tables are normalized, indexed, and multilingual-ready.
@@ -85,7 +119,7 @@ Tables are normalized, indexed, and multilingual-ready.
 
 ### 4. 📦 Enrichment & Caching
 
-Every movie is enriched with:
+Every movie / Tv Show is enriched with:
 
 - TMDB (EN/FR title, overview, trailer)
 - OMDB (IMDb rating, votes)
@@ -113,7 +147,7 @@ Caching logic:
 
 ## 🎬 Recommendation Engine
 
-### `recommend_movies()` — Filter-based Discovery
+### `recommend_movies_by_filters()` — Filter-based Discovery
 
 ```text
 User Filters → TMDB → Enrich + Cache → Rerank by IMDb → MovieCard[]
@@ -142,6 +176,30 @@ Steps:
 5. Return `MovieCard[]`
 
 ---
+
+### `search_movies_by_title()` — LLM-based Search
+
+```text
+Movie Name → GPT → Similar Titles → TMDB IDs → Enrich → Filter → MovieCard[]
+```
+
+Steps:
+1. Send query to LLM:  
+   `"Which movie best matches: 'Ge tout'?"`
+2. Extract title and resolve to TMDB ID
+3. Enrich + cache metadata
+4. Return best-matching `MovieCard[]`
+
+
+### `recommend_tvshows_by_filters()` — Filter-based Discovery
+same same
+
+### `recommend_similar_tvshows()` — LLM-based Discovery
+same same
+
+### `search_tvshows_by_title()` — LLM-based Search
+same same
+
 
 ## 🔒 Security Model
 
@@ -227,6 +285,7 @@ movie-recommender-chatbot/
 │       │   ├── auth_routes.py
 │       │   ├── chat_routes.py
 │       │   ├── movie_routes.py
+│       │   ├── tvshow_routes.py
 │       │   ├── router.py
 │       │   └── user_routes.py
 │       ├── core
@@ -240,11 +299,13 @@ movie-recommender-chatbot/
 │       ├── models
 │       │   ├── chat_session_model.py
 │       │   ├── movie_model.py
+│       │   ├── tvshow_model.py
 │       │   ├── user_model.py
-│       │   └── user_movie_model.py
+│       │   └── user_media_model.py
 │       ├── schemas
 │       │   ├── chat_schemas.py
 │       │   ├── movie_schemas.py
+│       │   ├── tvshow_schemas.py
 │       │   ├── stats_schemas.py
 │       │   └── user_schemas.py
 │       ├── scripts
@@ -255,9 +316,9 @@ movie-recommender-chatbot/
 │       │   ├── chat_service.py
 │       │   ├── llm_service.py
 │       │   ├── movie_service.py
-│       │   ├── parser_service.py
+│       │   ├── tvshow_service.py
 │       │   ├── session_service.py
-│       │   └── user_movie_service.py
+│       │   └── user_media_service.py
 │       ├── utils
 │       │   └── utils.py
 │       └── main.py
@@ -268,16 +329,18 @@ movie-recommender-chatbot/
 │   ├── api.md
 │   ├── architecture.md
 │   ├── data-models.md
+│   ├── schemas.md
 │   ├── features.md
 │   ├── movie_flow.md
+│   ├── tvshow_flow.md
+│   ├── user-flow.md
 │   ├── progress-backend.md
-│   ├── schemas.md
-│   └── user-flow.md
+│   ├── tests.md
+│   └── cdcd.md
 ├── storage
 │   └── movies.db
 ├── tests
-│   └── test_placeholder.py
-├── movie_service_test.py
+│   └── ...
 ├── requirements.txt
 ├── requirements-dev.txt
 ├── .env                          # Environment variables: API keys, secrets

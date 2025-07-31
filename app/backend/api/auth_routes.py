@@ -1,3 +1,5 @@
+# app/backend/api/auth_routes.py
+
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from app.backend.core.database import get_db

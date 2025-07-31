@@ -1,0 +1,46 @@
+name: CD Pipeline
+
+on:
+  workflow_dispatch:  # Manual deploy trigger
+
+jobs:
+  deploy:
+    name: Deploy to GCP Cloud Run
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2️⃣ Set up Google Cloud credentials
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      # 3️⃣ Set up Docker with GCP
+      - name: Set up Docker auth
+        uses: docker/login-action@v3
+        with:
+          registry: gcr.io
+          username: oauth2accesstoken
+          password: ${{ secrets.GCP_ACCESS_TOKEN }}
+
+      # 4️⃣ Build and tag Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/unwatched-backend:$GITHUB_SHA .
+
+      # 5️⃣ Push to Google Container Registry
+      - name: Push Docker image
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/unwatched-backend:$GITHUB_SHA
+
+      # 6️⃣ Deploy to Cloud Run
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: unwatched-backend
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/unwatched-backend:$GITHUB_SHA
+          region: europe-west1  # or us-central1, etc.

@@ -1,13 +1,13 @@
 import pytest
+from datetime import date
 from app.backend.services.movie_service import (
-    to_movie_card, rerank_and_imdb_filter_movies, recommend_movies
+    to_movie_card,
+    rerank_and_imdb_filter_movies,
+    recommend_movies_by_filters
 )
 from app.backend.models.movie_model import CachedMovie
-from app.backend.models.user_movie_model import UserMovie
-from app.backend.schemas.movie_schemas import MovieSearchFilters
-from app.backend.schemas.movie_schemas import MovieCard
-from datetime import date
-
+from app.backend.models.user_media_model import UserMovie
+from app.backend.schemas.movie_schemas import MovieSearchFilters, MovieCard
 
 
 # ------------------- to_movie_card -------------------
@@ -36,7 +36,6 @@ def test_to_movie_card_language_en():
 
 
 def test_to_movie_card_language_fr():
-    movie = CachedMovie(
         tmdb_id=2,
         title_en="Interstellar",
         title_fr="Interstellaire",
@@ -61,8 +60,6 @@ def test_to_movie_card_language_fr():
 # ------------------- rerank_and_imdb_filter_movies -------------------
 
 def test_rerank_and_filter_movies():
-    from app.backend.services.movie_service import rerank_and_imdb_filter_movies
-
     movies = [
         CachedMovie(tmdb_id=1, imdb_rating=8.5, imdb_votes_count=100000),
         CachedMovie(tmdb_id=2, imdb_rating=7.0, imdb_votes_count=50000),
@@ -79,18 +76,10 @@ def test_rerank_and_filter_movies():
     assert [m.tmdb_id for m in result] == [3, 1]
 
 
-# ------------------- recommend_movies -------------------
+# ------------------- recommend_movies_by_filters -------------------
 
-
-
-def test_recommend_movies_mocked(mocker, test_db_session):
-    from app.backend.services.movie_service import recommend_movies
-
-    # Patch all external logic
-    mocker.patch("app.backend.services.movie_service.map_genre_to_id", return_value=18)
-    mocker.patch("app.backend.services.movie_service.fetch_unseen_tmdb_ids", return_value=[1])
-    mocker.patch("app.backend.services.movie_service.get_and_cache_movies_data_to_db", return_value=None)
-
+def test_recommend_movies_by_filters_mocked(mocker, test_db_session):
+    mock_tmdb_ids = [1]
     mock_movie = CachedMovie(
         tmdb_id=1,
         imdb_id="tt1234567",
@@ -110,11 +99,15 @@ def test_recommend_movies_mocked(mocker, test_db_session):
         cache_update_date=date.today()
     )
 
+    # Patch all external calls
+    mocker.patch("app.backend.services.movie_service.map_genre_to_id", return_value=18)
+    mocker.patch("app.backend.services.movie_service.fetch_unseen_tmdb_ids", return_value=mock_tmdb_ids)
+    mocker.patch("app.backend.services.movie_service.enrich_and_cache_movies", return_value=None)
     mocker.patch("app.backend.services.movie_service.fetch_movies_from_cache", return_value=[mock_movie])
     mocker.patch("app.backend.services.movie_service.rerank_and_imdb_filter_movies", return_value=[mock_movie])
 
     filters = MovieSearchFilters(genre_name="drama")
-    result = recommend_movies(filters, user_id=1, database=test_db_session, language="en")
+    result = recommend_movies_by_filters(filters, user_id=1, database=test_db_session, language="en")
 
     assert isinstance(result, list)
     assert isinstance(result[0], MovieCard)
